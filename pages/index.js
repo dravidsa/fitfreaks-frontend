@@ -7,9 +7,12 @@ import RecentBlog from "../components/recent-blog";
 import Testimonial from "../components/testimonial";
 import UpcomingEvents from "../components/upcoming-events";
 import { API_URL } from "../config";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 import Groups from "../components/groups"
 import Coaches from "../components/coaches"
+import AuthButton from "../components/global/AuthButton"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,8 +23,26 @@ export default function Home({ events, blogs, groups  , coaches}) {
 
   const coachData = coaches.data ; 
 
+  const [isLogged, setIsLogged] = useState();
+  const [username, setUsername] = useState('');
+  
+  useEffect(() => {
+
+    const storedUsername = localStorage.getItem('username');
+    setIsLogged(!!storedUsername);
+    setUsername(storedUsername || ''); // Set to empty string if null
+    console.log("username is ", storedUsername);
+    /*
+      setIsLogged(!!localStorage.getItem('username'));
+       username = localStorage.getItem('username') ; 
+       console.log ( "username is ", username ) ;  */ 
+
+  }, []);
+  
+ 
+  
   return (
-    <Layout title="huddle">
+    <Layout title="huddle" username={username}>
       <Hero />
       <UpcomingEvents events={eventsData} />
       <Groups groups={groupData} />
@@ -31,6 +52,8 @@ export default function Home({ events, blogs, groups  , coaches}) {
       <FeaturedEvents events={eventsData} />
       <Testimonial />
       <RecentBlog blogs={blogsData} />
+      
+
     </Layout>
   );
 }

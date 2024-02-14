@@ -65,7 +65,7 @@ const UpcomingEvents = ({ events }) => {
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
-                          <Link href={`/events/${evt?.attributes?.slug}`}>
+                          <Link href={`/events/${evt?.attributes?.slug}`} legacyBehavior>
                             {evt?.attributes?.name}
                           </Link>
                         </h3>
@@ -120,7 +120,7 @@ const UpcomingEvents = ({ events }) => {
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
-                          <Link href={`/events/${evt?.attributes?.slug}`}>
+                          <Link href={`/events/${evt?.attributes?.slug}`} legacyBehavior>
                             {evt?.attributes?.name}
                           </Link>
                         </h3>
@@ -175,7 +175,7 @@ const UpcomingEvents = ({ events }) => {
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
-                          <Link href={`/events/${evt?.attributes?.slug}`}>
+                          <Link href={`/events/${evt?.attributes?.slug}`} legacyBehavior>
                             {evt?.attributes?.name}
                           </Link>
                         </h3>
@@ -230,7 +230,7 @@ const UpcomingEvents = ({ events }) => {
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
-                          <Link href={`/events/${evt?.attributes?.slug}`}>
+                          <Link href={`/events/${evt?.attributes?.slug}`} legacyBehavior>
                             {evt?.attributes?.name}
                           </Link>
                         </h3>
@@ -285,7 +285,7 @@ const UpcomingEvents = ({ events }) => {
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
-                          <Link href={`/events/${evt?.attributes?.slug}`}>
+                          <Link href={`/events/${evt?.attributes?.slug}`} legacyBehavior>
                             {evt?.attributes?.name}
                           </Link>
                         </h3>
@@ -340,7 +340,7 @@ const UpcomingEvents = ({ events }) => {
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
-                          <Link href={`/events/${evt?.attributes?.slug}`}>
+                          <Link href={`/events/${evt?.attributes?.slug}`} legacyBehavior>
                             {evt?.attributes?.name}
                           </Link>
                         </h3>
@@ -395,7 +395,7 @@ const UpcomingEvents = ({ events }) => {
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
-                          <Link href={`/events/${evt?.attributes?.slug}`}>
+                          <Link href={`/events/${evt?.attributes?.slug}`} legacyBehavior>
                             {evt?.attributes?.name}
                           </Link>
                         </h3>

@@ -41,7 +41,7 @@ const Hero = () => {
                   {" "}
                   <FaRegLightbulb /> Featured Events
                 </button>
-                <Link href="/events">
+                <Link href="/events" legacyBehavior>
                   <button>
                     {" "}
                     <MdOutlineEvent /> All Events

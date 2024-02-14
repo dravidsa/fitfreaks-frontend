@@ -68,7 +68,7 @@ const Groups = ({ groups }) => {
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
-                          <Link href={`/groups/${group?.attributes?.slug}`}>
+                          <Link href={`/groups/${group?.attributes?.slug}`} legacyBehavior>
                             {group?.attributes?.name}
                           </Link>
                         </h3>

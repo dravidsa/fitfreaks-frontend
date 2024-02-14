@@ -32,7 +32,7 @@ const BlogDetails = ({ blogs, slug }) => {
                 <ul className="single-blog__metainfo">
                   <li>
                     <BiUser />
-                    <Link href="/#">{user.data.attributes.username}</Link>
+                    <Link href="/#" legacyBehavior>{user.data.attributes.username}</Link>
                   </li>
                   <li>
                     <FaRegCalendarAlt />

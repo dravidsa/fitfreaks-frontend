@@ -5,6 +5,7 @@ import { FaFacebookF, FaTwitter, FaWhatsapp, FaYoutube } from "react-icons/fa";
 
 const Footer = () => {
   return (
+    // <!-- ========== Footer section End ========== -->
     <>
       <div className="footer">
         <div className="container">
@@ -18,7 +19,7 @@ const Footer = () => {
                 <h2 className="display-4">
                   <Link href="tel:610383766284">+0123456789</Link>
                 </h2>
-                <Link href="/contact" className="smooth button button__primary">
+                <Link href="/contact" className="smooth button button__primary" legacyBehavior>
                   <span>Send me a message</span>
                 </Link>
               </div>
@@ -27,7 +28,7 @@ const Footer = () => {
           <div className="footer__middle">
             <div className="row">
               <div className="col-lg-3 d-flex justify-content-center align-items-center mb-3 mb-lg-0 justify-content-lg-start">
-                <Link href="/">
+                <Link href="/" legacyBehavior>
                   <h2 className="m-0">HUDDLE.</h2>
                 </Link>
               </div>
@@ -50,22 +51,22 @@ const Footer = () => {
               <div className="col-lg-3 d-flex justify-content-center align-items-center mb-3 mb-lg-0 justify-content-lg-end">
                 <ul className="social-icon">
                   <li>
-                    <Link href="/">
+                    <Link href="/" legacyBehavior>
                       <FaFacebookF />
                     </Link>
                   </li>
                   <li>
-                    <Link href="/">
+                    <Link href="/" legacyBehavior>
                       <FaTwitter />
                     </Link>
                   </li>
                   <li>
-                    <Link href="/">
+                    <Link href="/" legacyBehavior>
                       <FaYoutube />
                     </Link>
                   </li>
                   <li>
-                    <Link href="/">
+                    <Link href="/" legacyBehavior>
                       <FaWhatsapp />
                     </Link>
                   </li>
@@ -84,7 +85,6 @@ const Footer = () => {
         </div>
       </div>
     </>
-    // <!-- ========== Footer section End ========== -->
   );
 };
 
