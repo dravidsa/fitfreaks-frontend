@@ -31,7 +31,7 @@ const FeaturedEvents = ({ events }) => {
                 <div className="upcoming-events__item__info">
                   <div className="title">
                     <h3>
-                      <Link href={`/events/${evt?.attributes?.slug}`}>{evt?.attributes?.name}</Link>
+                      <Link href={`/events/${evt?.attributes?.slug}`} legacyBehavior>{evt?.attributes?.name}</Link>
                     </h3>
                   </div>
                   <div className="d-flex align-items-center justify-content-between mb-2">

@@ -68,7 +68,7 @@ const Coaches = ({ coaches }) => {
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
-                          <Link href={`/coaches/${coach?.attributes?.slug}`}>
+                          <Link href={`/coaches/${coach?.attributes?.slug}`} legacyBehavior>
                             {coach?.attributes?.name}
                           </Link>
                         </h3>

@@ -1,13 +1,28 @@
 import Link from "next/link";
 import { Navbar } from "react-bootstrap";
 import { MdOutlineEmail, MdOutlineCall } from "react-icons/md";
+import AuthButton from "./AuthButton" ; 
+import { useState, useEffect } from 'react';
 
-const Header = () => {
+
+let message = "           Welcome guest" ; 
+//let username = localStorage.getItem('username');
+//console.log( "Found username " + username ) ; 
+
+const Header = ({username}) => {
+
+  const [isLogged, setIsLogged] = useState();
+
+  useEffect(() => {
+      setIsLogged(!!localStorage.getItem('jwt'));
+  }, []);
+
+  console.log ( "username in headers is " + username)
   return (
     <div className="header">
       <div className="container">
         <Navbar className="p-0" bg="none" expand="lg">
-          <Link className="navbar-brand" href="/">
+          <Link className="navbar-brand" href="/" legacyBehavior>
             <h2 className="logo">FitFreaks</h2>
           </Link>
           <Navbar.Toggle
@@ -26,7 +41,7 @@ const Header = () => {
             </span>
           </Navbar.Toggle>
           <Navbar.Collapse
-            className="collapse navbar-collapse main-menu pg-scroll justify-content-center"
+            className="collapse navbar-collapse main-menu pg-scroll justify-content-center float-root"
             id="navbarSupportedContent"
           >
             <ul className="navbar-nav">
@@ -45,13 +60,14 @@ const Header = () => {
                   Blogs
                 </Link>
               </li>
+             
               <li className="nav-item">
                 <Link className="nav-link" href="/groups">
                   Groups
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" href="/coahces">
+                <Link className="nav-link" href="/coaches">
                   Coaches
                 </Link>
               </li>
@@ -60,37 +76,38 @@ const Header = () => {
                   Contact
                 </Link>
               </li>
+             
+            
+                    {!isLogged && ( 
+                        <li className="nav-item">
+                            <Link className="nav-link"href="/auth/register">
+                                Register
+                            </Link>
+                        </li>
+                    )}
+                    <li className="nav-item">
+                        {!isLogged ? (
+                            <Link className="nav-link" href="/auth/login">
+                                Login
+                            </Link>
+                        ) : (
+                            <Link className="nav-link" href="/auth/logout">
+                                Logout
+                            </Link>
+                        )}
+                    </li>
+            
+              
             </ul>
-            <ul className="navbar-nav navbar__right d-block d-lg-none">
-              <li className="nav-item">
-                <Link className="nav-link" href="mailto:admin@gmail.com">
-                <MdOutlineEmail />
-                  admin@gmail.com
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" href="tel:0123456789">
-                  <MdOutlineCall />
-                  0123456789
-                </Link>
-              </li>
-            </ul>
+           
+            
+            
+
+           
+
           </Navbar.Collapse>
 
-          <ul className="navbar-nav navbar__right d-none d-lg-flex align-items-center gap-2">
-            <li className="nav-item">
-              <Link className="nav-link" href="mailto:admin@gmail.com">
-                <MdOutlineEmail />
-                admin@gmail.com
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" href="tel:0123456789">
-              <MdOutlineCall />
-                0123456789
-              </Link>
-            </li>
-          </ul>
+         
         </Navbar>
       </div>
     </div>
