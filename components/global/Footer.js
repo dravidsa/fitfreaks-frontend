@@ -29,7 +29,7 @@ const Footer = () => {
             <div className="row">
               <div className="col-lg-3 d-flex justify-content-center align-items-center mb-3 mb-lg-0 justify-content-lg-start">
                 <Link href="/" legacyBehavior>
-                  <h2 className="m-0">HUDDLE.</h2>
+                  <h2 className="m-0">FitFreaks</h2>
                 </Link>
               </div>
               <div className="col-lg-6 d-flex justify-content-center align-items-center mb-3 mb-lg-0">

@@ -10,9 +10,17 @@ import md from 'markdown-it';
 
 const EventSinglePage = ({events, slug}) => {
   const event = events?.filter((evt) => evt?.attributes?.slug === slug);
+  console.log( "event obj is " +JSON.stringify(event) ); 
+
   const { attributes } = event[0];
-  const { date, image, tickets, time, name, location, description, organizer, price } =
+  const { date, image, tickets, time, name, location, description, organizer, price , attendee_catagories , event_catagories} =
     attributes;
+  console.log( "event and attendee cats are " + JSON.stringify(attendee_catagories) ) ; 
+  console.log(JSON.stringify(event_catagories)) ; 
+ 
+  const enrollment_url = "/enrollment?event_id=" + event[0].id + "&event_name="+name+""; 
+  console.log ( "event URL is " + enrollment_url ) ; 
+
   return (
     <Layout title={name}>
        <InnerPageLayout title={name} />
@@ -79,9 +87,12 @@ const EventSinglePage = ({events, slug}) => {
                     <h5>{tickets} tickets are available</h5>
                   </div>
                 </div>
-                <Link className="button w-100 mt-4" target="_blank" href="https://eticket.railway.gov.bd/">
+                <Link className="button w-100 mt-4" target="_self"  href = {enrollment_url}
+
+                  >
                   Confirm your ticket
                 </Link>
+                
               </div>
              </div>
             </div>

@@ -5,13 +5,10 @@ import { useState } from "react"
 import axios from "axios";
 import { useSearchParams } from 'next/navigation'
 
+async function registerForEvent(data , event_id )  {
+    console.log ( "data is ",  JSON.stringify(data)) ; 
 
-
-
-async function registerForEvent(data)  {
-    console.log ( "full name is ",  data.full_name ) ; 
-
-    const result = await  axios.post("http://localhost:1337/api/event-enrollments/", {
+    const result = await  axios.post("http://localhost:1637/api/event-enrollments/", {
            data  : {  full_name : data.full_name ,
                     email : data.email , 
                     contact_number : data.mobile , 
@@ -19,7 +16,7 @@ async function registerForEvent(data)  {
                     event_catagory : data.race_cat ,
                     gender : data.gender , 
                     address:  data.address ,
-                    event_id : data.event_id
+                    event_id : event_id
                  } 
 
         },   { headers: new Headers({'content-type': 'application/json'} ) }    
@@ -49,7 +46,7 @@ async function registerForEvent(data)  {
   */ 
   const  handleRegistration = (data) => { console.log(data);
   console.log ( "going to call azios api now "); 
-  registerForEvent(data)  ; 
+  registerForEvent(data , event_id )  ; 
   } 
   const handleError = (errors) => {console.log( "ërror here " + errors )};
 
@@ -61,8 +58,8 @@ async function registerForEvent(data)  {
       message: 'Invalid email address' },
     address : { required : "address is required"} }, 
     mobile : { required : "mobile number is required " , minLength : { value : 10 , message  : "mobile number must be 10 digits"}}   ,
-    catagory  : { required : "race category is required"} , 
-    gender : { required : "gender is required"}
+    category  : { required : "race category is required"} , 
+    gender : { required : "gender is required"} 
   };
 
   const [catagory, setRace] = useState("10k")
@@ -83,95 +80,133 @@ async function registerForEvent(data)  {
 
 <div className="px-5 py-5"> 
 <div>     
-        <h1 className="text-2xl text-bold text-black-600"> <center> Registering for : {event_name}  </center></h1>
+        <h1> <center> Registering for : {event_name}  </center></h1>
         </div>
-<form class="w-full max-w-lg" onSubmit={handleSubmit(handleRegistration, handleError)}>
 
-    
-  <div class="flex flex-wrap -mx-3 mb-6">
-  
-    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="full_name">
-        Full Name
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="full_name" type="text" placeholder="enter your full name"  {...register('full_name', registerOptions.full_name) } />
-      <small className="text-danger">
-      {errors?.full_name && errors.full_name.message}
-    </small>
-   
-    </div>
-    <div class="w-full md:w-1/2 px-3">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="email">
-        Email
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="email" type="text" placeholder="Enter your Email"  {...register('email', registerOptions.email) } />
-      <small className="text-danger">
-      {errors?.email && errors.email.message}
-    </small>
-    </div>
-  </div>
-  <div class="w-full px-3">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="mobile">
-        Mobile
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="mobile" type="text" placeholder="Enter your mobile"  {...register('mobile', registerOptions.mobile) }/>
-      <small className="text-danger">
-      {errors?.mobile && errors.mobile.message}
-    </small>
-      
-    </div>
-    <div class="relative">
-    <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="gender">
-        Gender
-      </label>
-        <select class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="Gender"  {...register('gender', registerOptions.gender) }>
-          <option>Female</option>
-          <option>Male</option>
-       
-        </select>
-        <small className="text-danger">
-      {errors?.gender && errors.gender.message}
-    </small>
+      <form className="w-full max-w-lg" onSubmit={(e) => handleSubmit(handleRegistration, handleError)(e)}>
+      <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="full_name">
+            Full Name
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+            id="full_name"
+            type="text"
+            placeholder="Enter your full name"
+            {...register('full_name', registerOptions.full_name)}
+          />
+          <small className="text-danger">
+            {errors?.full_name && errors.full_name.message}
+          </small>
         </div>
-  <div class="flex flex-wrap -mx-3 mb-6">
-    <div class="w-full px-3">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="address" >
-        Address
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="address" type="text" placeholder="Enter your address"  {...register('address', registerOptions.address) } />
-      <small className="text-danger">
-      {errors?.address && errors.address.message}
-    </small>
-    
-    </div>
-    
-  </div>
-  <div class="flex flex-wrap -mx-3 mb-2">
-    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="city">
-        City
-      </label>
-      <input class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="city" type="text" placeholder="City"  {...register('city', registerOptions.city) } />
-    </div>
-    <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-      <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="">
-        catagory
-      </label>
-      <div class="relative">
-        <select class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="catagory"  {...register('catagory', registerOptions.catagory) }>
-          <option>21 KM</option>
-          <option>10 KM</option>
-          <option>5 KM</option>
-        </select>
-        
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="email">
+            Email
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="email"
+            type="text"
+            placeholder="Enter your Email"
+            {...register('email', registerOptions.email)}
+          />
+          <small className="text-danger">
+            {errors?.email && errors.email.message}
+          </small>
+        </div>
       </div>
-    </div>
+      <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="mobile">
+            Mobile
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="mobile"
+            type="text"
+            placeholder="Enter your mobile"
+            {...register('mobile', registerOptions.mobile)}
+          />
+          <small className="text-danger">
+            {errors?.mobile && errors.mobile.message}
+          </small>
+        </div>
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="gender">
+            Gender
+          </label>
+          <select
+            className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="gender"
+            {...register('gender', registerOptions.gender)}
+          >
+            <option>Female</option>
+            <option>Male</option>
+          </select>
+          <small className="text-danger">
+            {errors?.gender && errors.gender.message}
+          </small>
+        </div>
+      </div>
+      <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="w-full px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="address">
+            Address
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="address"
+            type="text"
+            placeholder="Enter your address"
+            {...register('address', registerOptions.address)}
+          />
+          <small className="text-danger">
+            {errors?.address && errors.address.message}
+          </small>
+        </div>
+      </div>
+      <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="city">
+            City
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="city"
+            type="text"
+            placeholder="City"
+            {...register('city', registerOptions.city)}
+          />
+        </div>
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="category">
+            Category
+          </label>
+          <div className="relative">
+            <select
+              className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              id="category"
+              {...register('category', registerOptions.category)}>
+              <option>21 KM</option>
+              <option>10 KM</option>
+              <option>5 KM</option>
+            </select>
+          </div>
+        </div>
+      </div>
     
-  </div>
-  <input type="hidden" id="event_Id" name="event_d" value={event_id} {...register('event_id', registerOptions.event_id)}></input>
-  
-  <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Submit</button>
-</form>
+      <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Submit</button>
+      
+      <button
+        type="submit"
+        className="text-black  text-center me-2 mb-2"
+      >
+        Register
+      </button>
+      
+    </form>
+
 
 </div>
     
