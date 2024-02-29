@@ -5,6 +5,14 @@ import SectionTitle from "../../components/global/section-title";
 import { IoIosArrowDown } from "react-icons/io";
 import RegisterForm from "./RegisterForm.js"
 import { useSearchParams } from 'next/navigation'
+import { useState, useEffect} from "react" ;
+import { API_URL } from "../../config";
+import Col from 'react-bootstrap/Col';
+import axios from "axios";
+import Attendee_Catagories from './Attendee_catagories';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Form from 'react-bootstrap/Form';
+
 
 async function getEvent(event_id) { 
   console.log( "calling get event for event_id " + event_id  ); 
@@ -20,12 +28,46 @@ async function getEvent(event_id) {
 
 
 export default function Enrollment() {
+  const searchParams = useSearchParams();
+  const [event_id, setEventId] = useState(null);
+  const [event_name, setEventName] = useState(null);
+  const [event, setEvent] = useState(null);
+  const [numCat, setNumCat] = useState(null); // Using useState for numCat
+  const [eventCat,setEventCat] = useState() ; 
+  const [charges,setCharges] = useState() ; 
+  
+  useEffect(() => {
+    const eventId = searchParams.get("event_id");
+    const eventName = searchParams.get("event_name");
+    setEventId(eventId);
+    setEventName(eventName);
 
-const searchParams = useSearchParams()
+    if (eventId) {
+      getEvent(eventId).then((eventData) => {
+
+        setEvent(eventData);
+        console.log("Event catagories :", JSON.stringify(eventData.data.attributes.attendee_catagories.length));
+        //numCat = eventData.data.attributes.attendee_catagories.length  ; 
+        setNumCat(eventData.data.attributes.attendee_catagories.length); 
+        setEventCat( eventData.data.attributes.event_catagories ) ; 
+        setCharges(eventData.data.attributes.charges);
+
+        console.log ( "charges=" , JSON.stringify(eventData.data.attributes.charges)); 
+      }).catch(error => {
+        console.error("Error fetching event:", error);
+      });
+    }
+  }, [searchParams]);
+
+  if (!event_id || !event_name) {
+    return <div>Loading...</div>; // or any loading indicator
+  }
+
+  console.log("Event ID from query:", event_id , "attendee cat are " , numCat);
  
-const event_id  = searchParams.get('event_id')
-const event_name = searchParams.get('event_name') ; 
-console.log ( " got event_id from query " + event_id ) ; 
+  //const noCat = event.attributes.attendee_catagories.length ; 
+  //console.log ( "no of cat are ", noCat ) ; 
+ 
   return (
     <Layout title= "Event Enrollment">
     <div>
@@ -33,7 +75,7 @@ console.log ( " got event_id from query " + event_id ) ;
         <div className="container">
           <div className="row">
             <div className="col-md-8 col-lg-6 mx-auto">
-              <SectionTitle title="Even Registration" />
+              <SectionTitle title="Event Registration" />
               <Accordion
                 className="accordion-flush faq-accordion"
                 defaultActiveKey="0"
@@ -45,6 +87,14 @@ console.log ( " got event_id from query " + event_id ) ;
                   </Accordion.Header>
                   <Accordion.Body>
                   <h2> Registering for Event : {event_name} </h2> 
+                  {numCat > 1  ? (
+                        <div className="popular">
+                          <Attendee_Catagories /> 
+                        </div>
+                      ) : (
+                        "No catagories"
+                      )}
+                 
                    
                   
                   </Accordion.Body>
@@ -55,7 +105,7 @@ console.log ( " got event_id from query " + event_id ) ;
                     <span>Attendee Details</span> <IoIosArrowDown />
                   </Accordion.Header>
                   <Accordion.Body>
-                  <RegisterForm event_id={event_id}/>
+                  <RegisterForm event_id={event_id} event_cat={eventCat} charges={charges} />
                   </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="2">
@@ -64,14 +114,9 @@ console.log ( " got event_id from query " + event_id ) ;
                     <span>Price</span> <IoIosArrowDown />
                   </Accordion.Header>
                   <Accordion.Body>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                    occaecat cupidatat non proident, sunt in culpa qui officia
-                    deserunt mollit anim id est laborum.
+                 
+
+
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>

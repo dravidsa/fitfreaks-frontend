@@ -11,6 +11,12 @@ body {
   box-sizing: border-box;
 }
 
+label  , input {
+  display: inline-block;
+  width: 150px;
+  text-align: right;
+}
+
 small {
   display: block;
 }

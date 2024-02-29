@@ -65,11 +65,11 @@ export async function getStaticProps() {
   const blogs = await blogData.json();
   const groupData = await fetch(`${API_URL}/api/groups?populate=*`);
   const groups = await groupData.json();
-  console.log(blogs);
+  //console.log(blogs);
   const coachData = await fetch(`${API_URL}/api/coaches?populate=*`);
   const coaches = await coachData.json();
-  console.log(blogs);
-  console.log(coaches) ; 
+  //console.log(blogs);
+  //console.log(coaches) ; 
   return {
     props: { events, blogs, groups  , coaches }
   };

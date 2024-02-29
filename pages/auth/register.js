@@ -1,11 +1,29 @@
 import { useState } from 'react';
 import axios from '../../lib/axios';
 import * as Yup from 'yup';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Field, ErrorMessage } from 'formik';
+import Layout from "../../components/global/layout";
+
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import {
+    useNavigate,
+  } from 'react-router-dom';
+
+
 
 const Register = () => {
     const [alert,setAlert] = useState();
     const [email,setEmail] = useState();
+    const [password, setPassword] = useState(); 
+    const [repassword, setRepassword] = useState() ; 
+
+    //const navigate = useNavigate();
+    const [validated, setValidated] = useState(false);
+
+    const [ error  , setError ] = useState("") ; 
 
     const initialValues = {
         username: "",
@@ -79,92 +97,146 @@ const Register = () => {
             });
     }
 
+    const resetForm = (data) => { 
+        /*
+        setEmail('') ; 
+        setPassword('') ; 
+        setRepassword(''); 
+        */
+       data.target.email.value = "" ; 
+
+    }
+    const handleSubmit =  async (data) => {
+        console.log ( "Got in validation ") ; 
+
+        if ( data.target.password.value != data.target.repassword.value) 
+        {
+            data.preventDefault();
+            data.stopPropagation();
+            setError("password and confirm password are not same ") ; 
+            setValidated(true); 
+            return ; 
+
+        }
+    
+        const form = data.currentTarget;
+        if (form.checkValidity() === false) {
+          data.preventDefault();
+          data.stopPropagation();
+          console.log( "some validation issues  ")
+          setValidated(true); 
+          return ; 
+        }
+    
+        try { 
+            console.log ( "going to call azios api now "); 
+            data.preventDefault();
+          data.stopPropagation();
+          const registrationData = { 
+            username : data.target.email.value , 
+            email : data.target.email.value , 
+            password : data.target.password.value ,
+            role : "1" 
+
+          }
+         
+          console.log ( "values are " + JSON.stringify(registrationData) ); 
+          axios
+              .post('/api/users', registrationData)
+              .then(response => {
+                /*
+                  const message = `Please check your email (${values.email}) to confirm your account.`;
+                  setAlert(['success', message]);
+                  setEmail(values.email);
+                */
+               console.log( "response is ", response) ; 
+               setError("Üser is registered successfully .Login with this id from top menu") ; 
+               //await delay(1000); 
+               //navigate('/auth/login'); 
+
+               //resetForm(registrationData); 
+                
+               
+              })
+              .catch(error => {
+                setError( "Error in registering user , please try again. ") ; 
+                console.log ( "error is " ,JSON.stringify(error)) ;
+                resetForm();  
+              })
+              .finally(() => {
+                 // setSubmitting(false);
+                 console.log ( "error in finally ", error) ; 
+               });
+
+         
+           console.log( "got this data in handleSubmit" , data.target.email.value + data.target.password.value  ); 
+            return ;
+     
+        } catch (error ){ 
+            console.error(error) ; 
+        }
+        
+    }
     return (
         <>
-            <h1>Register</h1>
-            <hr />
-            {alert && (
-                <div style={{ backgroundColor: alert[0] === "success" ? "lightgreen" : "lightcoral" }}>
-                    <div dangerouslySetInnerHTML={{ __html: alert[1] }} />
-                </div>
-            )}
-            {email && (
-                <>
-                    <br />
-                    <small>
-                        If you haven&apos;t received our email, <button onClick={() => resendEmail(email)}>click here</button> to resend it.
-                    </small>
-                </>
-            )}
-            <br />
-            <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={(values, { setSubmitting, resetForm }) => onSubmit(values, { setSubmitting, resetForm })} >
-                { ({ isSubmitting, isValid }) => (
-                    <Form>
-                        <div>
-                            <div><label htmlFor="username">Username</label></div>
-                            <Field type="text" id="username" name="username" placeholder="Username" />
-                            <div className="error"><ErrorMessage name="username" /></div>
-                        </div>
 
-                        <br />
+    <Layout title="Register">
+      <div className="d-flex align-items-center justify-content-center vh-100"> 
+      <Card style={{ width: '38rem' }}>
+      <Card.Body>
+        <Card.Title>Register</Card.Title>
+     
+        <Card.Text>
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+     
+      <Form.Group>  
+    
+      <FloatingLabel
+        label="Email address"
+      >
+        
+        <Form.Control type="email" id="email" placeholder="name@example.com"  required/>
+      </FloatingLabel>
+      <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+      </Form.Group>
 
-                        <div>
-                            <div><label htmlFor="email">Email</label></div>
-                            <Field type="email" id="email" name="email" placeholder="Email" />
-                            <div className="error"><ErrorMessage name="email" /></div>
-                        </div>
+    
 
-                        <br />
+      <FloatingLabel
+        label="Password">
+        <Form.Control type="password" id = "password" placeholder="enter your password" minlength="6" required />
+      </FloatingLabel>
 
-                        <div>
-                            <div><label htmlFor="password">Password</label></div>
-                            <Field type="password" id="password" name="password" placeholder="Password" />
-                            <div className="error"><ErrorMessage name="password" /></div>
-                        </div>
+      <FloatingLabel
+        label="rePassword">
+        <Form.Control type="password" id = "repassword" placeholder="enter your password again" minlength="6" required />
+      </FloatingLabel>
+  
 
-                        <br />
+    <Button type="submit">Register</Button>{' '}
+     
+     <label> {error}</label>
+     
+    </Form>
+    </Card.Text>
+    </Card.Body>
+    </Card> 
 
-                        <div>
-                            <div><label htmlFor="repeatPassword">Repeat Password</label></div>
-                            <Field type="password" id="repeatPassword" name="repeatPassword" placeholder="Repeat password" />
-                            <div className="error"><ErrorMessage name="repeatPassword" /></div>
-                        </div>
 
-                        <br />
+      
 
-                        <div>
-                            <label htmlFor="privacyPolicy">
-                                <Field type="checkbox" name="privacyPolicy" />
-                                I accept the <a href="#">Privacy Policy</a> terms and conditions.
-                            </label>
-                            <div className="error"><ErrorMessage name="privacyPolicy" /></div>
-                        </div>
+    
 
-                        <br />
-
-                        <div>
-                            <label htmlFor="newsletterSubscription">
-                                <Field type="checkbox" name="newsletterSubscription" />
-                                I want to subscribe to the newsletter to receive all the latest news and updates.
-                            </label>
-                        </div>
-
-                        <br />
-
-                        <button 
-                            type="submit"
-                            disabled={!isValid} >
-                            {!isSubmitting && "Submit"}
-                            {isSubmitting && "Loading..."}
-                        </button>
-                    </Form>
-                )}
-            </Formik>
+      
+      
+                  
+           
+        </div>
+        </Layout>
+       
         </>
     )
+
 }
 
 export default Register;
