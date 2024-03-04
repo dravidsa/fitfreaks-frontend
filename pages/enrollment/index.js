@@ -35,7 +35,8 @@ export default function Enrollment() {
   const [numCat, setNumCat] = useState(null); // Using useState for numCat
   const [eventCat,setEventCat] = useState() ; 
   const [charges,setCharges] = useState() ; 
-  
+  const [attendeeCat,setAttendeeCat] = useState() ; 
+
   useEffect(() => {
     const eventId = searchParams.get("event_id");
     const eventName = searchParams.get("event_name");
@@ -50,6 +51,7 @@ export default function Enrollment() {
         //numCat = eventData.data.attributes.attendee_catagories.length  ; 
         setNumCat(eventData.data.attributes.attendee_catagories.length); 
         setEventCat( eventData.data.attributes.event_catagories ) ; 
+        setAttendeeCat(eventData.data.attributes.attendee_catagories)
         setCharges(eventData.data.attributes.charges);
 
         console.log ( "charges=" , JSON.stringify(eventData.data.attributes.charges)); 
@@ -89,7 +91,7 @@ export default function Enrollment() {
                   <h2> Registering for Event : {event_name} </h2> 
                   {numCat > 1  ? (
                         <div className="popular">
-                          <Attendee_Catagories /> 
+                          <Attendee_Catagories attendee_catagories={attendeeCat}/> 
                         </div>
                       ) : (
                         "No catagories"

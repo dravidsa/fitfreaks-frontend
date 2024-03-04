@@ -66,17 +66,14 @@ import axios from "axios";
   
 }
 
-function handleChange(event) { 
-  console.log("new value is "  , event.target.value) ; 
- 
-
-}
 
 
  function RegisterForm({event_id, event_cat, charges}) {
 
 const [price,setPrice] = useState(0) ; 
 const [enrollmentId,setEnrollmentId] = useState(0) ; 
+
+const [isInputEnabled, setIsInputEnabled] = useState(true);
 
 
 console.log ( "in register the  event is " +event_id +  'name is ' + JSON.stringify(event_cat) + "chagres are " + charges)   ; 
@@ -87,15 +84,22 @@ const [validated, setValidated] = useState(false);
 //const eventCat = eventData.data.attributes.event_catagories ; 
 //console.log ( "event cat are ", JSON.stringify(eventCat)) ; 
 
-function calculateCharges(catagories  , charges , event_catagory_selected ) { 
-  
-  
-  console.log( "looking for" + event_catagory_selected + "in " + JSON.stringify(catagories)) ; 
+//function calculateCharges(catagories  , charges , event_catagory_selected ) { 
 
-  for (var i = 0; i < catagories.length; i++) {
-    if (catagories[i].event_catagory == event_catagory_selected ) {
-      console.log ( "got price ", catagories[i].price)
-        return catagories[i].price ; 
+  function handleChange(event) { 
+    console.log("new value is "  , event.target.value) ; 
+    setPrice(calculateCharges(event.target.value)); 
+  
+  }
+
+function calculateCharges( event_catagory_selected ) {   
+  
+  console.log( "looking for" + event_catagory_selected + "in " + JSON.stringify(event_cat)) ; 
+
+  for (var i = 0; i < event_cat.length; i++) {
+    if (event_cat[i].event_catagory == event_catagory_selected ) {
+      console.log ( "got price ", event_cat[i].price)
+        return event_cat[i].price ; 
       //break;
     }
    
@@ -127,7 +131,8 @@ const handleSubmit =  async (data) => {
 
         console.log ( "done registration successfully" + id ) ; 
         
-        setPrice(calculateCharges(event_cat, charges, data.target.event_catagory.value)) ; 
+        setPrice(calculateCharges(data.target.event_catagory.value)) ; 
+        setIsInputEnabled(false) ; 
         //setPrice(price) ;
 
         //console.log( "price for the event" , price );
@@ -155,7 +160,7 @@ return (
         label="Email address"
         className="mb-3"
       >
-        <Form.Control type="email" id="email" placeholder="name@example.com"  required/>
+        <Form.Control type="email" id="email" placeholder="name@example.com"  required disabled={!isInputEnabled}/>
       </FloatingLabel>
       <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
       </Form.Group>
@@ -166,23 +171,24 @@ return (
         label="Mobile "
         className="mb-3"
       >
-        <Form.Control type="input" id = "mobile" placeholder="enter your Mobile Number" required />
+        <Form.Control type="input" id = "mobile" placeholder="enter your Mobile Number" required disabled={!isInputEnabled}/>
       </FloatingLabel>
 
 
       <FloatingLabel label="Full Name"  className="mb-3">
-        <Form.Control type="input" id="fullName" placeholder="Enter your full name"  required />
+        <Form.Control type="input" id="fullName" placeholder="Enter your full name"  required disabled={!isInputEnabled} />
       </FloatingLabel>
 
       <FloatingLabel
         label="Address"
         className="mb-3"
       >
-        <Form.Control type="input" id="address" placeholder="enter your home address" required />
+        <Form.Control type="input" id="address" placeholder="enter your home address" required disabled={!isInputEnabled} />
       </FloatingLabel>
 
-      <FloatingLabel label="Select Gender" className="mb-3"  required>
-      <Form.Select id="gender" aria-label="Gender">
+      <FloatingLabel label="Select Gender" className="mb-3">
+      <Form.Select id="gender" aria-label="Gender" required disabled={!isInputEnabled}>
+        <option></option>
         <option value="Female">Female</option>
         <option value="Male">Male</option>
        
@@ -192,7 +198,8 @@ return (
     
 
     <FloatingLabel label="Select Event Catagory" className="mb-3" required >
-      <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleChange}>
+      <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleChange} required disabled={!isInputEnabled}>
+      <option></option>
       {event_cat && 
         event_cat.map(d => (<option value={d.event_catagory}>{d.event_catagory_desc}</option>))} 
 
@@ -223,7 +230,8 @@ return (
     
 
 
-    <Button type="submit">Register</Button>{' '}
+    <Button type="submit" disabled={!isInputEnabled} >Register</Button>{' '}
+    <Button disabled={isInputEnabled} >Go For Payment</Button>{' '}
     </Form>
 
     </>
