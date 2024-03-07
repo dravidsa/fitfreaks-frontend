@@ -72,7 +72,7 @@ const UpcomingEvents = ({ events }) => {
                       </div>
                       <div className="d-flex align-items-center justify-content-between mb-2">
                         <div className="price d-flex align-items-center gap-2">
-                          <ImPriceTags /> <span>${evt.attributes.price}</span>
+                          <ImPriceTags /> <span>Rs.{evt.attributes.price}</span>
                         </div>
                         <div className="d-flex align-items-center gap-2">
                           <ImTicket />{" "}
