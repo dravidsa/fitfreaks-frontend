@@ -80,18 +80,20 @@ const Header = ({username}) => {
             
                     {!isLogged && ( 
                         <li className="nav-item">
-                            <Link className="nav-link"href="/auth/register">
+                            <Link className="nav-link"href="/">
                                 Register
                             </Link>
                         </li>
                     )}
                     <li className="nav-item">
                         {!isLogged ? (
-                            <Link className="nav-link" href="/auth/login">
+                        
+                          
+                          <Link className="nav-link" href="/">
                                 Login
                             </Link>
                         ) : (
-                            <Link className="nav-link" href="/auth/logout">
+                            <Link className="nav-link" href="/">
                                 Logout
                             </Link>
                         )}
