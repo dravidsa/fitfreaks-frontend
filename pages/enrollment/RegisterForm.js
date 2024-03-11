@@ -30,7 +30,7 @@ import axios from "axios";
   
   console.log ( "calling axios api for reg ") ; 
 
-    const result =   await axios.post("http://localhost:1637/api/event-enrollments/", {
+  const result = await  axios.post(`${API_URL}api/event-enrollments/`, {
         data  : {  full_name : event.target.fullName.value ,
                  email : event.target.email.value , 
                  mobile : event.target.mobile.value , 

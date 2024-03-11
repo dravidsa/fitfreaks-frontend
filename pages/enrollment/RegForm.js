@@ -4,11 +4,14 @@ import { useForm } from "react-hook-form";
 import { useState } from "react"
 import axios from "axios";
 import { useSearchParams } from 'next/navigation'
+import { API_URL } from "../../../config";
+
 
 async function registerForEvent(data , event_id )  {
     console.log ( "data is ",  JSON.stringify(data)) ; 
 
-    const result = await  axios.post("http://localhost:1637/api/event-enrollments/", {
+    //const res = await fetch(`${API_URL}/api/events?populate=*`);
+    const result = await  axios.post(`${API_URL}api/event-enrollments/`, {
            data  : {  full_name : data.full_name ,
                     email : data.email , 
                     contact_number : data.mobile , 
