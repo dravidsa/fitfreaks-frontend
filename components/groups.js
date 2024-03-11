@@ -9,6 +9,8 @@ import {
   ImCalendar,
   ImClock,
 } from "react-icons/im";
+
+import GrUserManager from "react-icons/gr";
 import { API_URL } from "../config";
 
 const Groups = ({ groups }) => {
@@ -40,13 +42,13 @@ const Groups = ({ groups }) => {
   return (
     <div id="groups" className="upcoming-events section-padding">
       <div className="container">
-        <SectionTitle title="Groups" />
+        <SectionTitle title="Featured Groups" />
         <Tabs
           id="controlled-tab-example"
           activeKey={key}
           onSelect={(k) => setKey(k)}
         >
-          <Tab eventKey="AllEvents" title="All Groups">
+          <Tab eventKey="AllGroups" title="All Groups">
             <div className="row">
               {groups?.slice(0, 6).map((group) => (
                 <div key={group.id} className="col-md-6 col-lg-4 mb-4">
@@ -75,12 +77,9 @@ const Groups = ({ groups }) => {
                       </div>
                       <div className="d-flex align-items-center justify-content-between mb-2">
                         <div className="price d-flex align-items-center gap-2">
-                          <ImPriceTags /> <span>${group.attributes.description}</span>
+                           <span>${group.attributes.description}</span>
                         </div>
-                        <div className="d-flex align-items-center gap-2">
-                          <ImTicket />{" "}
-                          <span>{group.attributes.mentor}</span>
-                        </div>
+                       
                       </div>
                       <div className="d-flex align-items-center gap-2 mb-2">
                         <ImLocation2 /> <span>{group.attributes.location}</span>
@@ -90,10 +89,12 @@ const Groups = ({ groups }) => {
                           <ImCalendar />
                           <span>{group.attributes.sport}</span>
                         </div>
+                     
                         <div className="d-flex align-items-center gap-2">
-                          <ImClock />
-                          <span>{group.attributes.sport}</span>
+                          <ImTicket />{" "}
+                          <span>{group.attributes.mentor}</span>
                         </div>
+
                       </div>
                     </div>
                   </div>

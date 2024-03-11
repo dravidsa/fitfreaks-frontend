@@ -70,7 +70,7 @@ const EventPage = ({events}) => {
                   </div>
                   <div className="d-flex align-items-center justify-content-between mb-2">
                     <div className="price d-flex align-items-center gap-2">
-                      <ImPriceTags /> <span>${evt.attributes.price}</span>
+                      Rs.  <span>{evt.attributes.price}</span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <ImTicket />{" "}
@@ -397,7 +397,7 @@ const EventPage = ({events}) => {
                   </div>
                   <div className="d-flex align-items-center justify-content-between mb-2">
                     <div className="price d-flex align-items-center gap-2">
-                      <ImPriceTags /> <span>${evt.attributes.price}</span>
+                      Rs. <span>${evt.attributes.price}</span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <ImTicket />{" "}

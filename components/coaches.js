@@ -40,7 +40,7 @@ const Coaches = ({ coaches }) => {
   return (
     <div id="coaches" className="upcoming-events section-padding">
       <div className="container">
-        <SectionTitle title="Coaches" />
+        <SectionTitle title="Featured Coaches" />
         <Tabs
           id="controlled-tab-example"
           activeKey={key}
@@ -75,7 +75,7 @@ const Coaches = ({ coaches }) => {
                       </div>
                       <div className="d-flex align-items-center justify-content-between mb-2">
                         <div className="price d-flex align-items-center gap-2">
-                           <span>${coach.attributes.headline}</span>
+                           <span>{coach.attributes.headline}</span>
                         </div>
                         <div className="d-flex align-items-center gap-2">
                           <ImTicket />{" "}
