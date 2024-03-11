@@ -9,7 +9,7 @@ import { useState, useEffect} from "react" ;
 import { API_URL } from "../../config";
 import Col from 'react-bootstrap/Col';
 import axios from "axios";
-import Attendee_Catagories from './Attendee_catagories';
+import Attendee_Catagories from '../../components/Attendee_catagories';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 
