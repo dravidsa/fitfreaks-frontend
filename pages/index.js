@@ -31,7 +31,7 @@ export default function Home({ events, blogs, groups  , coaches}) {
     const storedUsername = localStorage.getItem('username');
     setIsLogged(!!storedUsername);
     setUsername(storedUsername || ''); // Set to empty string if null
-    console.log("username is ", storedUsername);
+    //console.log("username is ", storedUsername);
     /*
       setIsLogged(!!localStorage.getItem('username'));
        username = localStorage.getItem('username') ; 
@@ -42,7 +42,7 @@ export default function Home({ events, blogs, groups  , coaches}) {
  
   
   return (
-    <Layout title="huddle" username={username}>
+    <Layout title="FitFreaks" username={username}>
       <Hero />
       <UpcomingEvents events={eventsData} />
       <Groups groups={groupData} />

@@ -75,7 +75,7 @@ const Coaches = ({ coaches }) => {
                       </div>
                       <div className="d-flex align-items-center justify-content-between mb-2">
                         <div className="price d-flex align-items-center gap-2">
-                          <ImPriceTags /> <span>${coach.attributes.headline}</span>
+                           <span>${coach.attributes.headline}</span>
                         </div>
                         <div className="d-flex align-items-center gap-2">
                           <ImTicket />{" "}
