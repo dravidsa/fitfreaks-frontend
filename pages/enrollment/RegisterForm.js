@@ -34,6 +34,8 @@ const makePayment = async (event) => {
   ).then((t) =>
     t.json()
   );
+  console.log( "JSON request is ",JSON.stringify(userData) )
+
   console.log ("data from razorpay is " + JSON.stringify(razordata)) ;
   var options = {
     key: process.env.RAZORPAY_KEY, // Enter the Key ID generated from the Dashboard
@@ -44,8 +46,6 @@ const makePayment = async (event) => {
     description: "Thankyou for your registration",
     image: "https://manuarora.in/logo.png",
     handler: function (response) {
-      
-     
 
       // Validate payment at server - using webhooks is a better idea.
       //setStatusMessage("Payment is successful. You are registered for the event ")
@@ -55,6 +55,7 @@ const makePayment = async (event) => {
       console.log (response.razorpay_payment_id);
       console.log(response.razorpay_order_id);
       console.log(response.razorpay_signature);
+      alert( "payment successful , registration complete. ")
       window.location.href = '/';
       //router.push('/');
       //resetForm();
@@ -102,7 +103,7 @@ const initializeRazorpay = () => {
   
 
 async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSignature ) {
-  console.log ( "calling axios api for reg ") ; 
+  console.log ( "calling updateing payment api for reg ") ; 
 
   const result = await  axios.put(`${API_URL}/api/event-enrollments/`+enrollmentId, {
         data  : {  
@@ -117,6 +118,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   ) 
   .then(response => {
   console.log( "return from payment update  id is  " + response.data.data.id) ; 
+ 
   //setEnrollmentId(response.data.data.id) ; 
   //console.log( "response in then is ", JSON.stringify(response)); 
 
@@ -181,7 +183,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
 
 function RegisterForm ({event}) {
 
-  const [price,setPrice] = useState(0) ; 
+  const [price,setPrice] = useState(event?.data?.attributes?.price) ; 
   const [enrollmentId,setEnrollmentId] = useState(0) ; 
   
   const [isInputEnabled, setIsInputEnabled] = useState(true);
@@ -193,9 +195,9 @@ function RegisterForm ({event}) {
   //const { push } = useRouter();
  
 
-  const basePrice = event.data.attributes.price ; 
-  const event_cat = event.data.attributes.event_catagories  ;
-  const charges = event.data.attributes.charges ; 
+  const basePrice = event?.data?.attributes?.price ; 
+  const event_cat = event?.data?.attributes?.event_catagories  ;
+  const charges = event?.data?.attributes?.charges ; 
   
   //setPrice(basePrice) ;
 

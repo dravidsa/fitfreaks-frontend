@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     // Also, check the amount and currency on the backend (Security measure)
     const payment_capture = 1;
     const jsonString  = req.body;
-    console.log ( "JSON is " + jsonString) ; 
+    console.log ( "JSON is " + JSON.stringify(jsonString) ); 
     const data = JSON.parse(JSON.stringify(jsonString));
     const amount = data.amount;
     console.log( "got amount as " + amount ) ; 
