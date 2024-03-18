@@ -185,7 +185,7 @@ const GroupsPage = ({groups}) => {
                 <div className="upcoming-events__item__info">
                   <div className="title">
                     <h3>
-                      <Link href={`/groups//${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
+                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
                     </h3>
                   </div>
                 
