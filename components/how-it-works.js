@@ -13,7 +13,7 @@ const HowItWorks = () => {
                                 01
                             </div>
                             <h3>Fitness Enthusiasts</h3>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, rerum big occasion!</p>
+                            <p>This platform will help fitness enthusiasts to find out fitness events and coaches in their cities</p>
                            </div>
                         </div>
                         <div className="col-md-6 col-lg-4 mb-4 mb-lg-0 text-center">
@@ -22,7 +22,7 @@ const HowItWorks = () => {
                                 02
                             </div>
                             <h3>Event Organizers </h3>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, rerum Trick Question!</p>
+                            <p>Get access to fitness lovers in their cities. Have a good channels to market and manage the event end to end </p>
                            </div>
                         </div>
                         <div className="col-md-6 col-lg-4 mb-4 mb-lg-0 text-center">
@@ -39,8 +39,8 @@ const HowItWorks = () => {
                            <div className="how-works__item--number">
                                 04
                             </div>
-                            <h3>Mercants</h3>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, rerum Array too!</p>
+                            <h3>Merchants</h3>
+                            <p>Get dedicated audience devoted to fitness.</p>
                            </div>
                         </div>
                     </div>

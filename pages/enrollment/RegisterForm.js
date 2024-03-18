@@ -6,7 +6,86 @@ import { useState } from "react" ;
 import { API_URL } from "../../config";
 import Col from 'react-bootstrap/Col';
 import axios from "axios";
+import { useRouter } from 'next/router';
 
+
+const makePayment = async (event) => {
+  console.log("here...");
+  //const router = useRouter();
+  const res = await initializeRazorpay();
+
+  if (!res) {
+    alert("Razorpay SDK Failed to load");
+    return;
+  }
+  console.log( "got event data" , event) ; 
+  // Make API call to the serverless API
+  const userData = {
+    amount : event.target.form.price.value 
+      };
+  const razordata = await fetch("/api/razorpay", { method: "POST"  , 
+
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(userData),
+}
+  
+  ).then((t) =>
+    t.json()
+  );
+  console.log ("data from razorpay is " + JSON.stringify(razordata)) ;
+  var options = {
+    key: process.env.RAZORPAY_KEY, // Enter the Key ID generated from the Dashboard
+    name: event.target.form.fullName.value,
+    currency: razordata.currency,
+    amount: razordata.amount,
+    order_id: razordata.id,
+    description: "Thankyou for your registration",
+    image: "https://manuarora.in/logo.png",
+    handler: function (response) {
+      
+     
+
+      // Validate payment at server - using webhooks is a better idea.
+      //setStatusMessage("Payment is successful. You are registered for the event ")
+      updatePaymentStatus(event.target.form.enrollmentId.value, response.razorpay_payment_id, response.razorpay_order_id,response.razorpay_signature) ; 
+  
+
+      console.log (response.razorpay_payment_id);
+      console.log(response.razorpay_order_id);
+      console.log(response.razorpay_signature);
+      window.location.href = '/';
+      //router.push('/');
+      //resetForm();
+    },
+    prefill: {
+      name: event.target.form.fullName.value,
+      email: event.target.form.email.value,
+      contact:event.target.form.mobile.value,
+    },
+  };
+
+  const paymentObject = new window.Razorpay(options);
+  paymentObject.open();
+};
+
+const initializeRazorpay = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    // document.body.appendChild(script);
+
+    script.onload = () => {
+      resolve(true);
+    };
+    script.onerror = () => {
+      resolve(false);
+    };
+
+    document.body.appendChild(script);
+  });
+};
 
 
 
@@ -22,20 +101,53 @@ import axios from "axios";
   }
   
 
-
-
- async function registerForEvent(event , event_id )  {
-
-
-  
+async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSignature ) {
   console.log ( "calling axios api for reg ") ; 
 
-  const result = await  axios.post(`${API_URL}api/event-enrollments/`, {
+  const result = await  axios.put(`${API_URL}/api/event-enrollments/`+enrollmentId, {
+        data  : {  
+                payment_order_id : pgOrderId , 
+                payment_id : pgPaymentId , 
+                payment_signature : pgSignature , 
+                payment_status : "successful" 
+
+              } 
+
+     },   { headers: new Headers({'content-type': 'application/json'} ) }    
+  ) 
+  .then(response => {
+  console.log( "return from payment update  id is  " + response.data.data.id) ; 
+  //setEnrollmentId(response.data.data.id) ; 
+  //console.log( "response in then is ", JSON.stringify(response)); 
+
+   return ( response.data.data.id)  ; 
+})
+.catch(error => {
+  console.log( "got some error ", JSON.stringify(error)) ; 
+  return(0);
+
+  }
+  )
+  console.log( "result is ", result ) ; 
+
+  return(result); 
+  
+}
+
+ async function registerForEvent(event , event_id )  {
+  //console.log( "event has " + event_cat.length + " catoagories") ; 
+  //var event_c = "no catagory" ;
+
+  //if ( event_cat.length > 0 ) 
+   // event_c = event.target.form.event_catagory.value   ; 
+  
+  
+  const result = await  axios.post(`${API_URL}/api/event-enrollments/`, {
         data  : {  full_name : event.target.fullName.value ,
                  email : event.target.email.value , 
                  mobile : event.target.mobile.value , 
                  attendee_catagory : "general" , 
-                 event_catagory : event.target.event_catagory.value ,
+                 event_catagory : event.target.event_catagory.value,
                  gender : event.target.gender.value , 
                  address:  event.target.address.value ,
                  event_id : event_id
@@ -67,176 +179,208 @@ import axios from "axios";
 }
 
 
+function RegisterForm ({event}) {
 
- function RegisterForm({event_id, event_cat, charges}) {
-
-const [price,setPrice] = useState(0) ; 
-const [enrollmentId,setEnrollmentId] = useState(0) ; 
-
-const [isInputEnabled, setIsInputEnabled] = useState(true);
-
-
-console.log ( "in register the  event is " +event_id +  'name is ' + JSON.stringify(event_cat) + "chagres are " + charges)   ; 
-//const event  = getEvent(event_id) ; 
-
-const [validated, setValidated] = useState(false);
-//const eventData =  await getEvent(event_id); 
-//const eventCat = eventData.data.attributes.event_catagories ; 
-//console.log ( "event cat are ", JSON.stringify(eventCat)) ; 
-
-//function calculateCharges(catagories  , charges , event_catagory_selected ) { 
-
-  function handleChange(event) { 
-    console.log("new value is "  , event.target.value) ; 
-    setPrice(calculateCharges(event.target.value)); 
+  const [price,setPrice] = useState(0) ; 
+  const [enrollmentId,setEnrollmentId] = useState(0) ; 
   
-  }
-
-function calculateCharges( event_catagory_selected ) {   
+  const [isInputEnabled, setIsInputEnabled] = useState(true);
   
-  console.log( "looking for" + event_catagory_selected + "in " + JSON.stringify(event_cat)) ; 
+  const event_id = event.data.attributes.id ; 
 
-  for (var i = 0; i < event_cat.length; i++) {
-    if (event_cat[i].event_catagory == event_catagory_selected ) {
-      console.log ( "got price ", event_cat[i].price)
-        return event_cat[i].price ; 
-      //break;
+  const [statusMessage , setStatusMessage] = useState(""); 
+  //console.log("got event as " + JSON.stringify(event.data)) ; 
+  //const { push } = useRouter();
+ 
+
+  const basePrice = event.data.attributes.price ; 
+  const event_cat = event.data.attributes.event_catagories  ;
+  const charges = event.data.attributes.charges ; 
+  
+  //setPrice(basePrice) ;
+
+  console.log ( "in register got the basepriceas " + basePrice)   ; 
+  //const event  = getEvent(event_id) ; 
+  
+  const [validated, setValidated] = useState(false);
+  //setPrice(basePrice) ; 
+  //const eventData =  await getEvent(event_id); 
+  //const eventCat = eventData.data.attributes.event_catagories ; 
+  //console.log ( "event cat are ", JSON.stringify(eventCat)) ; 
+  
+  //function calculateCharges(catagories  , charges , event_catagory_selected ) { 
+  
+    function handleChange(event) { 
+      console.log("new value is "  , event.target.value) ; 
+      setPrice(calculateCharges(event.target.value , basePrice)); 
+    
     }
-   
+  
+  function calculateCharges( event_catagory_selected  ,basePrice) {   
+    
+    console.log( "looking for" + event_catagory_selected + "in " + JSON.stringify(event_cat) + "base price is " + basePrice) ; 
+  
+    for (var i = 0; i < event_cat.length; i++) {
+      if (event_cat[i].event_catagory == event_catagory_selected ) {
+        console.log ( "got price ", event_cat[i].price)
+        if ( event_cat[i].price) 
+        {
+          console.log( "price is not null ") ; 
+  
+         }
+         else console.log ( "price is null") ; 
+      if ( event_cat[i].price )
+          return event_cat[i].price ;
+      else 
+          return basePrice ;  
+        //break;
+      }
+     
+    }
+    
+  return basePrice; 
   }
   
-return 0 ; 
-}
-
-
-const handleSubmit =  async (data) => {
-    console.log ( "Got in validation ") ; 
-
-    const form = data.currentTarget;
-    if (form.checkValidity() === false) {
-      data.preventDefault();
-      data.stopPropagation();
-      console.log( "some validation issues  ")
-      setValidated(true); 
-      return ; 
-    }
-
-    try { 
-        console.log ( "going to call azios api now "); 
+  
+  const handleSubmit =  async (data) => {
+      console.log ( "Got in validation ") ; 
+  
+      const form = data.currentTarget;
+      if (form.checkValidity() === false) {
         data.preventDefault();
-      data.stopPropagation();
-       
-        const id =  await registerForEvent(data , event_id )  ; 
-        setEnrollmentId(id) ;  
+        data.stopPropagation();
+        console.log( "some validation issues  ")
+        setValidated(true); 
+        return ; 
+      }
+  
+      try { 
+          console.log ( "going to call azios api now "); 
+          data.preventDefault();
+        data.stopPropagation();
+         
+          const id =  await registerForEvent(data , event_id )  ; 
+          setEnrollmentId(id) ;  
+  
+          console.log ( "done registration successfully" + id ) ; 
+          
+          setPrice(calculateCharges(data.target.event_catagory.value,basePrice)) ;
+  
+          setIsInputEnabled(false) ; 
+          //setPrice(price) ;
+  
+          //console.log( "price for the event" , price );
 
-        console.log ( "done registration successfully" + id ) ; 
-        
-        setPrice(calculateCharges(data.target.event_catagory.value)) ; 
-        setIsInputEnabled(false) ; 
-        //setPrice(price) ;
+          if ( price > 0 )
+            setStatusMessage("Data saved , complete the payment ") ; 
+          else 
+            setStatusMessage("Your registration is successful.") ; 
+          
+            return ;
 
-        //console.log( "price for the event" , price );
-       
-        
-        return ;
- 
-    } catch (error ){ 
-        console.error(error) ; 
-    }
-    
- 
-
-
-    
-
-  };
-
-return (
-    <>
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+   
+      } catch (error ){ 
+          console.error(error) ; 
+      }
+      
+   
+  
+  
+      
+  
+    };
+  
+  return (
+      <>
+        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+  
+        <Form.Group>  
+        <FloatingLabel
+          label="Email address"
+          className="mb-3"
+        >
+          <Form.Control type="email" id="email" placeholder="name@example.com"  required disabled={!isInputEnabled}/>
+        </FloatingLabel>
+        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+        </Form.Group>
+  
+  
+  
+        <FloatingLabel
+          label="Mobile "
+          className="mb-3"
+        >
+          <Form.Control type="input" id = "mobile" placeholder="enter your Mobile Number" required disabled={!isInputEnabled}/>
+        </FloatingLabel>
+  
+  
+        <FloatingLabel label="Full Name"  className="mb-3">
+          <Form.Control type="input" id="fullName" placeholder="Enter your full name"  required disabled={!isInputEnabled} />
+        </FloatingLabel>
+  
+        <FloatingLabel
+          label="Address"
+          className="mb-3"
+        >
+          <Form.Control type="input" id="address" placeholder="enter your home address" required disabled={!isInputEnabled} />
+        </FloatingLabel>
+  
+        <FloatingLabel label="Select Gender" className="mb-3">
+        <Form.Select id="gender" aria-label="Gender" required disabled={!isInputEnabled}>
+          <option></option>
+          <option value="Female">Female</option>
+          <option value="Male">Male</option>
+         
+        </Form.Select>
+      </FloatingLabel>
+  
+  
+      {event_cat &&   (
+      <FloatingLabel label="Select Event Catagory" className="mb-3" required >
+        <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleChange} required disabled={!isInputEnabled || event_cat.length==0 }>
+        <option></option>
+        {event_cat && 
+          event_cat.map(d => (<option value={d.event_catagory}>{d.event_catagory_desc}</option>))} 
+  
+        </Form.Select>
+     
+      </FloatingLabel>
+      )} 
 
       <Form.Group>  
-      <FloatingLabel
-        label="Email address"
-        className="mb-3"
-      >
-        <Form.Control type="email" id="email" placeholder="name@example.com"  required disabled={!isInputEnabled}/>
-      </FloatingLabel>
-      <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-      </Form.Group>
+                      <FloatingLabel
+                        label="Enrollment Id"
+                        className="mb-3"
+                      >
+                      <Form.Control type="input" id="enrollmentId" value={enrollmentId} disabled/>
+                      </FloatingLabel>
+                      
+                      </Form.Group>
+  
+      <Form.Group>  
+                      <FloatingLabel
+                        label="Event Price"
+                        className="mb-3"
+                      >
+                      <Form.Control type="input" id="price" value={price} disabled/>
+                      </FloatingLabel>
+                      
+                      </Form.Group>
+  
+                      <p> {statusMessage}</p> 
+  
+  
+     
+      <Button type="submit" disabled={!isInputEnabled} >Register</Button>{' '}
+      
+      <Button onClick={makePayment} disabled={isInputEnabled || price <= 0 } >Go For Payment</Button>{' '}
 
+      </Form>
+  
+      </>
+    );
+  }
 
-
-      <FloatingLabel
-        label="Mobile "
-        className="mb-3"
-      >
-        <Form.Control type="input" id = "mobile" placeholder="enter your Mobile Number" required disabled={!isInputEnabled}/>
-      </FloatingLabel>
-
-
-      <FloatingLabel label="Full Name"  className="mb-3">
-        <Form.Control type="input" id="fullName" placeholder="Enter your full name"  required disabled={!isInputEnabled} />
-      </FloatingLabel>
-
-      <FloatingLabel
-        label="Address"
-        className="mb-3"
-      >
-        <Form.Control type="input" id="address" placeholder="enter your home address" required disabled={!isInputEnabled} />
-      </FloatingLabel>
-
-      <FloatingLabel label="Select Gender" className="mb-3">
-      <Form.Select id="gender" aria-label="Gender" required disabled={!isInputEnabled}>
-        <option></option>
-        <option value="Female">Female</option>
-        <option value="Male">Male</option>
-       
-      </Form.Select>
-    </FloatingLabel>
-
-    
-
-    <FloatingLabel label="Select Event Catagory" className="mb-3" required >
-      <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleChange} required disabled={!isInputEnabled}>
-      <option></option>
-      {event_cat && 
-        event_cat.map(d => (<option value={d.event_catagory}>{d.event_catagory_desc}</option>))} 
-
-      </Form.Select>
-   
-    </FloatingLabel>
-
-    <Form.Group>  
-                    <FloatingLabel
-                      label="Enrollment Id"
-                      className="mb-3"
-                    >
-                    <Form.Control type="input" id="enrollmentId" value={enrollmentId} disabled/>
-                    </FloatingLabel>
-                    
-                    </Form.Group>
-
-    <Form.Group>  
-                    <FloatingLabel
-                      label="Event Price"
-                      className="mb-3"
-                    >
-                    <Form.Control type="input" id="price" value={price} disabled/>
-                    </FloatingLabel>
-                    
-                    </Form.Group>
-
-    
-
-
-    <Button type="submit" disabled={!isInputEnabled} >Register</Button>{' '}
-    <Button disabled={isInputEnabled} >Go For Payment</Button>{' '}
-    </Form>
-
-    </>
-  );
-}
 
 
 
