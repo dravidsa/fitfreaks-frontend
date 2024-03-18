@@ -77,7 +77,7 @@ const Groups = ({ groups }) => {
                       </div>
                       <div className="d-flex align-items-center justify-content-between mb-2">
                         <div className="price d-flex align-items-center gap-2">
-                           <span>${group.attributes.description}</span>
+                           <span>{group.attributes.description}</span>
                         </div>
                        
                       </div>

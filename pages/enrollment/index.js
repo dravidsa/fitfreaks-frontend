@@ -36,6 +36,11 @@ export default function Enrollment() {
   const [eventCat,setEventCat] = useState() ; 
   const [charges,setCharges] = useState() ; 
   const [attendeeCat,setAttendeeCat] = useState() ; 
+  const [basePrice , setBasePrice] = useState(-1) ; 
+
+  
+
+ 
 
   useEffect(() => {
     const eventId = searchParams.get("event_id");
@@ -47,12 +52,15 @@ export default function Enrollment() {
       getEvent(eventId).then((eventData) => {
 
         setEvent(eventData);
-        console.log("Event catagories :", JSON.stringify(eventData.data.attributes.attendee_catagories.length));
+        console.log("Event details :", JSON.stringify(eventData.data));
         //numCat = eventData.data.attributes.attendee_catagories.length  ; 
         setNumCat(eventData.data.attributes.attendee_catagories.length); 
         setEventCat( eventData.data.attributes.event_catagories ) ; 
         setAttendeeCat(eventData.data.attributes.attendee_catagories)
         setCharges(eventData.data.attributes.charges);
+        setBasePrice(eventData.data.attributes.price) ;
+        console.log( "base price set to " + basePrice) ; 
+        console.log( "base price set to " + basePrice) ; 
 
         console.log ( "charges=" , JSON.stringify(eventData.data.attributes.charges)); 
       }).catch(error => {
@@ -61,7 +69,16 @@ export default function Enrollment() {
     }
   }, [searchParams]);
 
-  if (!event_id || !event_name) {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (basePrice !== -1) {
+      setLoading(false);
+    }
+  }, [basePrice]);
+
+  console.log( "base price set to " + basePrice) ; 
+  if (!event_id || !event_name ) {
     return <div>Loading...</div>; // or any loading indicator
   }
 
@@ -70,7 +87,16 @@ export default function Enrollment() {
   //const noCat = event.attributes.attendee_catagories.length ; 
   //console.log ( "no of cat are ", noCat ) ; 
  
+
+  
+  if (loading) {
+    return <div>Loading...</div>; // Display a loading indicator until basePrice is set
+  }
+  
+
+
   return (
+
     <Layout title= "Event Enrollment">
     <div>
         <div className="faq section-padding">
@@ -107,7 +133,7 @@ export default function Enrollment() {
                     <span>Attendee Details</span> <IoIosArrowDown />
                   </Accordion.Header>
                   <Accordion.Body>
-                  <RegisterForm event_id={event_id} event_cat={eventCat} charges={charges} />
+                  <RegisterForm event={event}  />
                   </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="2">
@@ -118,7 +144,7 @@ export default function Enrollment() {
                   <Accordion.Body>
                  
 
-
+ 
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>
