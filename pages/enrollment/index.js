@@ -12,6 +12,8 @@ import axios from "axios";
 import Attendee_Catagories from '../../components/Attendee_catagories';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
+import termsPage from './tos';
+
 
 
 async function getEvent(event_id) { 
@@ -44,14 +46,15 @@ export default function Enrollment() {
 
   useEffect(() => {
     const eventId = searchParams.get("event_id");
-    const eventName = searchParams.get("event_name");
+    //const eventName = searchParams.get("event_name");
     setEventId(eventId);
-    setEventName(eventName);
+   // setEventName(eventName);
 
     if (eventId) {
       getEvent(eventId).then((eventData) => {
 
         setEvent(eventData);
+        setEventName(eventData.data.attributes.name);
         console.log("Event details :", JSON.stringify(eventData.data));
         //numCat = eventData.data.attributes.attendee_catagories.length  ; 
         setNumCat(eventData.data.attributes.attendee_catagories.length); 
@@ -60,9 +63,9 @@ export default function Enrollment() {
         setCharges(eventData.data.attributes.charges);
         setBasePrice(eventData.data.attributes.price) ;
         console.log( "base price set to " + basePrice) ; 
-        console.log( "base price set to " + basePrice) ; 
+        //console.log( "base price set to " + basePrice) ; 
 
-        console.log ( "charges=" , JSON.stringify(eventData.data.attributes.charges)); 
+        console.log ( "terms=" ); 
       }).catch(error => {
         console.error("Error fetching event:", error);
       });
@@ -78,7 +81,7 @@ export default function Enrollment() {
   }, [basePrice]);
 
   console.log( "base price set to " + basePrice) ; 
-  if (!event_id || !event_name ) {
+  if (!event_id ) {
     return <div>Loading...</div>; // or any loading indicator
   }
 
@@ -120,11 +123,8 @@ export default function Enrollment() {
                           <Attendee_Catagories attendee_catagories={attendeeCat}/> 
                         </div>
                       ) : (
-                        "No catagories"
+                        ""
                       )}
-                 
-                   
-                  
                   </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="1">
@@ -139,7 +139,10 @@ export default function Enrollment() {
                 <Accordion.Item eventKey="2">
                   <Accordion.Header>
                     {" "}
-                    <span>Price</span> <IoIosArrowDown />
+                    <span>Terms and Conditions</span> <IoIosArrowDown />
+                    <Accordion.Body>
+                  <termsPage event_text={event.data.attributes.terms}  />
+                  </Accordion.Body>
                   </Accordion.Header>
                   <Accordion.Body>
                  

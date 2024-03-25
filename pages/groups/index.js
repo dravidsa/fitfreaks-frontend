@@ -110,7 +110,7 @@ const GroupsPage = ({groups}) => {
                 <div className="upcoming-events__item__info">
                   <div className="title">
                     <h3>
-                      <Link href={`/groups//${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
+                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
                     </h3>
                   </div>
                   <div className="d-flex align-items-center justify-content-between mb-2">
@@ -149,7 +149,7 @@ const GroupsPage = ({groups}) => {
                 <div className="upcoming-events__item__info">
                   <div className="title">
                     <h3>
-                      <Link href={`/groups//${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
+                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
                     </h3>
                   </div>
               
@@ -221,7 +221,7 @@ const GroupsPage = ({groups}) => {
                 <div className="upcoming-events__item__info">
                   <div className="title">
                     <h3>
-                      <Link href={`/groups//${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
+                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
                     </h3>
                   </div>
           

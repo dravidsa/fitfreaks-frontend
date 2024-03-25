@@ -7,6 +7,7 @@ import { API_URL } from "../../config";
 import Col from 'react-bootstrap/Col';
 import axios from "axios";
 import { useRouter } from 'next/router';
+import termsPage from './tos';
 
 
 const makePayment = async (event) => {
@@ -143,7 +144,8 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   //if ( event_cat.length > 0 ) 
    // event_c = event.target.form.event_catagory.value   ; 
   
-  
+  //console.log( "got form data" + JSON.stringify(event) ) ; 
+
   const result = await  axios.post(`${API_URL}/api/event-enrollments/`, {
         data  : {  full_name : event.target.fullName.value ,
                  email : event.target.email.value , 
@@ -151,8 +153,10 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
                  attendee_catagory : "general" , 
                  event_catagory : event.target.event_catagory.value,
                  gender : event.target.gender.value , 
-                 address:  event.target.address.value ,
-                 event_id : event_id
+                 blood_group : event.target.blood_group.value , 
+                 emmergency_contact_name:  event.target.emmergency_name.value ,
+                 emmergency_contact_number:  event.target.emmergency_contact.value ,
+
               } 
 
      },   { headers: new Headers({'content-type': 'application/json'} ) }    
@@ -188,7 +192,7 @@ function RegisterForm ({event}) {
   
   const [isInputEnabled, setIsInputEnabled] = useState(true);
   
-  const event_id = event.data.attributes.id ; 
+  const event_id = event?.data?.attributes?.id ; 
 
   const [statusMessage , setStatusMessage] = useState(""); 
   //console.log("got event as " + JSON.stringify(event.data)) ; 
@@ -243,10 +247,50 @@ function RegisterForm ({event}) {
   return basePrice; 
   }
   
-  
+  const [agree, setAgree] = useState(false);
+
+  const [checked, setChecked] = useState(false); 
+   function handleChange(e) {
+      setChecked(e.target.checked);
+   }
+
+
+  const checkboxHandler = () => {
+    // if agree === true, it will be set to false
+    // if agree === false, it will be set to true
+    //setAgree(!agree);
+    console.log ( "agree is" , agree) ; 
+    if (agree == true) {
+      setStatusMessage ( "Agree the terms before saving") ; 
+      setAgree(true);
+      //setIsInputEnabled(false) ;     
+    }
+    else  { setStatusMessage ( "you are good ") ; setAgree(false) ; } 
+    // Don't miss the exclamation mark
+  }
+
+
   const handleSubmit =  async (data) => {
       console.log ( "Got in validation ") ; 
+
+      if  ( !checked ) 
+      {
+        data.preventDefault();
+        data.stopPropagation();
+        setStatusMessage( "Please agree on terms and conditions before proceeding" ) ; 
+        setValidated(true); 
+        return ; 
+      }
   
+      if ( data.target.emmergency_contact.value == data.target.mobile.value) {
+        setStatusMessage ( "Your mobile and emmergency contact number cant be same "); 
+        data.preventDefault();
+        data.stopPropagation();
+        console.log( "some validation issues  ")
+        setValidated(true); 
+        return ; 
+
+      }
       const form = data.currentTarget;
       if (form.checkValidity() === false) {
         data.preventDefault();
@@ -321,10 +365,17 @@ function RegisterForm ({event}) {
         </FloatingLabel>
   
         <FloatingLabel
-          label="Address"
+          label="Emmergency Contact  Name"
           className="mb-3"
         >
-          <Form.Control type="input" id="address" placeholder="enter your home address" required disabled={!isInputEnabled} />
+          <Form.Control type="input" id="emmergency_name" placeholder="enter your emmergency contact name" required disabled={!isInputEnabled} />
+        </FloatingLabel>
+
+        <FloatingLabel
+          label="Emmergency Contact Number"
+          className="mb-3"
+        >
+          <Form.Control type="input" id="emmergency_contact" placeholder="enter your emmergency contact number" required disabled={!isInputEnabled} />
         </FloatingLabel>
   
         <FloatingLabel label="Select Gender" className="mb-3">
@@ -336,6 +387,22 @@ function RegisterForm ({event}) {
         </Form.Select>
       </FloatingLabel>
   
+      <FloatingLabel label="Select Blood Grop" className="mb-3">
+        <Form.Select id="blood_group" aria-label="blood_group" required disabled={!isInputEnabled}>
+          <option></option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B+">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O-">O+</option>
+          <option value="O-">O-</option>
+
+
+        </Form.Select>
+      </FloatingLabel>
+
   
       {event_cat &&   (
       <FloatingLabel label="Select Event Catagory" className="mb-3" required >
@@ -368,6 +435,19 @@ function RegisterForm ({event}) {
                       </FloatingLabel>
                       
                       </Form.Group>
+
+                      <div>
+
+                      <div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="agree" onChange = {handleChange}/>
+  <label class="form-check-label" for="agree">
+    I agree to Terms and conditions 
+  </label>
+ 
+</div>
+          
+        </div>
+ 
   
                       <p> {statusMessage}</p> 
   
