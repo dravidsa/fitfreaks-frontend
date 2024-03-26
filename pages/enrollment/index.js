@@ -141,7 +141,7 @@ export default function Enrollment() {
                     {" "}
                     <span>Terms and Conditions</span> <IoIosArrowDown />
                     <Accordion.Body>
-                  <termsPage event_text={event.data.attributes.terms}  />
+                  Terms 
                   </Accordion.Body>
                   </Accordion.Header>
                   <Accordion.Body>

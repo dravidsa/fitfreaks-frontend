@@ -52,7 +52,10 @@ const makePayment = async (event) => {
       //setStatusMessage("Payment is successful. You are registered for the event ")
       updatePaymentStatus(event.target.form.enrollmentId.value, response.razorpay_payment_id, response.razorpay_order_id,response.razorpay_signature) ; 
   
-
+      //pass event_name , enrollmentID , customer_name , event_catagory , email , subject 
+      const emailSubject =  "You are in . Your registration for event - " + event.target.form.event_name.value + " is successful" ; 
+      sendMail(event.target.form.event_name.value , event.target.form.enrollmentId.value , event.target.form.fullName.value  ,event.target.form.event_catagory.value , event.target.form.email.value , emailSubject ) ; 
+      //sendMail(event_name , event.target.form.enrollmentId.value , event.target.form.fullName.value  ,event.target.form.event_catagory.value , event.target.form.email.value , emailSubject ) ; 
       console.log (response.razorpay_payment_id);
       console.log(response.razorpay_order_id);
       console.log(response.razorpay_signature);
@@ -89,7 +92,33 @@ const initializeRazorpay = () => {
   });
 };
 
+async function sendMail(event_name , enrollmentID , customer_name , event_catagory , email , subject ) {
 
+const mailData =  {
+  enrollmentID : enrollmentID , 
+  customer_name : customer_name , 
+  event_name : event_name ,
+  event_catagory : event_catagory , 
+  email : email  , 
+  subject : subject 
+
+}
+
+const data = await fetch("/api/sendMail", { method: "POST"  , 
+
+  headers: {
+    'Content-Type': 'application/text',
+  },
+  body: JSON.stringify(mailData )  ,
+}
+  
+  ).then((t) =>
+    t.json()
+  );
+  
+  //console.log( "JSON request is ",JSON.stringify(userData) )
+
+} 
 
  async function getEvent(event_id) { 
     console.log( "calling get event for event_id " + event_id  ); 
@@ -136,13 +165,15 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   return(result); 
   
 }
+ 
+
 
  async function registerForEvent(event , event_id )  {
   //console.log( "event has " + event_cat.length + " catoagories") ; 
   //var event_c = "no catagory" ;
 
   //if ( event_cat.length > 0 ) 
-   // event_c = event.target.form.event_catagory.value   ; 
+   // event_c = event.target.form.event_catagory.valuecd   ; 
   
   //console.log( "got form data" + JSON.stringify(event) ) ; 
 
@@ -188,6 +219,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
 function RegisterForm ({event}) {
 
   const [price,setPrice] = useState(event?.data?.attributes?.price) ; 
+  const [event_name , setEventName] = useState(event?.data?.attributes?.name)
   const [enrollmentId,setEnrollmentId] = useState(0) ; 
   
   const [isInputEnabled, setIsInputEnabled] = useState(true);
@@ -318,7 +350,9 @@ function RegisterForm ({event}) {
           //console.log( "price for the event" , price );
 
           if ( price > 0 )
-            setStatusMessage("Data saved , complete the payment ") ; 
+            { setStatusMessage("Data saved , complete the payment ") ;
+           // sendMail(event_name , data.target.enrollmentId.value , data.target.fullName.value  ,data.target.event_catagory.value , data.target.email.value , "Welcome" ) ; 
+          }  
           else 
             setStatusMessage("Your registration is successful.") ; 
           
@@ -340,6 +374,16 @@ function RegisterForm ({event}) {
       <>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
   
+        <Form.Group>  
+                      <FloatingLabel
+                        label="Event Name"
+                        className="mb-3"
+                      >
+                      <Form.Control type="input" id="event_name" value={event_name} disabled/>
+                      </FloatingLabel>
+                      
+                      </Form.Group>
+
         <Form.Group>  
         <FloatingLabel
           label="Email address"
