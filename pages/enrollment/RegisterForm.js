@@ -36,6 +36,8 @@ const makePayment = async (event) => {
     t.json()
   );
   console.log( "JSON request is ",JSON.stringify(userData) )
+  
+
 
   console.log ("data from razorpay is " + JSON.stringify(razordata)) ;
   var options = {
@@ -44,7 +46,7 @@ const makePayment = async (event) => {
     currency: razordata.currency,
     amount: razordata.amount,
     order_id: razordata.id,
-    description: "Thankyou for your registration",
+    description: event.target.form.enrollmentId.value ,
     image: "https://manuarora.in/logo.png",
     handler: function (response) {
 
@@ -185,8 +187,8 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
                  event_catagory : event.target.event_catagory.value,
                  gender : event.target.gender.value , 
                  blood_group : event.target.blood_group.value , 
-                 emmergency_contact_name:  event.target.emmergency_name.value ,
-                 emmergency_contact_number:  event.target.emmergency_contact.value ,
+                 emergency_contact_name:  event.target.emergency_name.value ,
+                 emergency_contact_number:  event.target.emergency_contact.value ,
 
               } 
 
@@ -305,6 +307,18 @@ function RegisterForm ({event}) {
   const handleSubmit =  async (data) => {
       console.log ( "Got in validation ") ; 
 
+      const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+      const isValidEmail = emailRegex.test(data.target.email.value);
+
+      if ( !isValidEmail) {
+        data.preventDefault();
+        data.stopPropagation();
+        setStatusMessage( "Email is not correct . " ) ; 
+        setValidated(true); 
+        return ; 
+
+      }
+      
       if  ( !checked ) 
       {
         data.preventDefault();
@@ -314,8 +328,8 @@ function RegisterForm ({event}) {
         return ; 
       }
   
-      if ( data.target.emmergency_contact.value == data.target.mobile.value) {
-        setStatusMessage ( "Your mobile and emmergency contact number cant be same "); 
+      if ( data.target.emergency_contact.value == data.target.mobile.value) {
+        setStatusMessage ( "Your mobile and emergency contact number cant be same "); 
         data.preventDefault();
         data.stopPropagation();
         console.log( "some validation issues  ")
@@ -323,10 +337,40 @@ function RegisterForm ({event}) {
         return ; 
 
       }
+      if ( data.target.fullName.value == data.target.emergency_name.value) {
+        setStatusMessage ( "Your name  and emergency contact name cant be same "); 
+        data.preventDefault();
+        data.stopPropagation();
+        console.log( "some validation issues  ")
+        setValidated(true); 
+        return ; 
+
+      }
+      if ( isNaN(data.target.mobile.value) ||  ( data.target.mobile.value.length !=10 )) {
+        setStatusMessage ( "Your mobile must be numeric and of 10 digits "); 
+        data.preventDefault();
+        data.stopPropagation();
+        console.log( "some validation issues  ")
+        setValidated(true); 
+        return ; 
+
+      }
+      if ( isNaN(data.target.emergency_contact.value) || ( data.target.emergency_contact.value.length !=10 )) {
+        setStatusMessage ( "Emergency Contact number must be numeric and of 10 digits "); 
+        data.preventDefault();
+        data.stopPropagation();
+        console.log( "some validation issues  ")
+        setValidated(true); 
+        return ; 
+
+      }
+
       const form = data.currentTarget;
       if (form.checkValidity() === false) {
         data.preventDefault();
         data.stopPropagation();
+        setStatusMessage ( "All fields are mandatory"); 
+
         console.log( "some validation issues  ")
         setValidated(true); 
         return ; 
@@ -408,25 +452,15 @@ function RegisterForm ({event}) {
           <Form.Control type="input" id="fullName" placeholder="Enter your full name"  required disabled={!isInputEnabled} />
         </FloatingLabel>
   
-        <FloatingLabel
-          label="Emmergency Contact  Name"
-          className="mb-3"
-        >
-          <Form.Control type="input" id="emmergency_name" placeholder="enter your emmergency contact name" required disabled={!isInputEnabled} />
-        </FloatingLabel>
-
-        <FloatingLabel
-          label="Emmergency Contact Number"
-          className="mb-3"
-        >
-          <Form.Control type="input" id="emmergency_contact" placeholder="enter your emmergency contact number" required disabled={!isInputEnabled} />
-        </FloatingLabel>
+        
   
         <FloatingLabel label="Select Gender" className="mb-3">
         <Form.Select id="gender" aria-label="Gender" required disabled={!isInputEnabled}>
           <option></option>
-          <option value="Female">Female</option>
+          
           <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
          
         </Form.Select>
       </FloatingLabel>
@@ -459,6 +493,19 @@ function RegisterForm ({event}) {
      
       </FloatingLabel>
       )} 
+      <FloatingLabel
+          label="Emergency Contact Name"
+          className="mb-3"
+        >
+          <Form.Control type="input" id="emergency_name" placeholder="enter emergency contact name" required disabled={!isInputEnabled} />
+        </FloatingLabel>
+
+        <FloatingLabel
+          label="Emergency Contact Number"
+          className="mb-3"
+        >
+          <Form.Control type="input" id="emergency_contact" placeholder="enter your emergency contact number" required disabled={!isInputEnabled} />
+        </FloatingLabel>
 
       <Form.Group>  
                       <FloatingLabel
@@ -485,7 +532,7 @@ function RegisterForm ({event}) {
                       <div class="form-check">
   <input class="form-check-input" type="checkbox" value="" id="agree" onChange = {handleChange}/>
   <label class="form-check-label" for="agree">
-    I agree to Terms and conditions 
+    I agree to Terms and conditions ( To view Terms and conditions , click on Terms and conditions block below)  
   </label>
  
 </div>
