@@ -27,6 +27,7 @@ subject : subject
 
     var message_body = 'Dear ' + customer_name  + '\n' ; 
     message_body = message_body + 'Your registration for event - ' + event_name + 'is successful \n' ; 
+    message_body = message_body + 'Enrollment ID : ' + enrollmentID  + '\n' ; 
     message_body = message_body + 'Event Catagory : ' + event_catagory + '\n' ;
     //console.log ( "Message is " + message_body );
 

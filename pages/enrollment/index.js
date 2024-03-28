@@ -39,6 +39,7 @@ export default function Enrollment() {
   const [charges,setCharges] = useState() ; 
   const [attendeeCat,setAttendeeCat] = useState() ; 
   const [basePrice , setBasePrice] = useState(-1) ; 
+  const [terms, setTerms] = useState(""); 
 
   
 
@@ -62,6 +63,7 @@ export default function Enrollment() {
         setAttendeeCat(eventData.data.attributes.attendee_catagories)
         setCharges(eventData.data.attributes.charges);
         setBasePrice(eventData.data.attributes.price) ;
+        setTerms(eventData.data.attributes.terms) ;
         console.log( "base price set to " + basePrice) ; 
         //console.log( "base price set to " + basePrice) ; 
 
@@ -140,14 +142,9 @@ export default function Enrollment() {
                   <Accordion.Header>
                     {" "}
                     <span>Terms and Conditions</span> <IoIosArrowDown />
-                    <Accordion.Body>
-                  Terms 
-                  </Accordion.Body>
                   </Accordion.Header>
-                  <Accordion.Body>
-                 
-
- 
+                    <Accordion.Body>
+                  {terms}
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>
