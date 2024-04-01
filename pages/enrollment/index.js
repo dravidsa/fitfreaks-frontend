@@ -34,6 +34,8 @@ export default function Enrollment() {
   const [event_id, setEventId] = useState(null);
   const [event_name, setEventName] = useState(null);
   const [event, setEvent] = useState(null);
+  const [location_address, setLocationAddress] = useState(null);
+  const [location_GPS, setLocationGPS] = useState(null);
   const [numCat, setNumCat] = useState(null); // Using useState for numCat
   const [eventCat,setEventCat] = useState() ; 
   const [charges,setCharges] = useState() ; 
@@ -56,7 +58,10 @@ export default function Enrollment() {
 
         setEvent(eventData);
         setEventName(eventData.data.attributes.name);
-        console.log("Event details :", JSON.stringify(eventData.data));
+        setLocationAddress(eventData.data.attributes.location_address ) ; 
+        setLocationGPS(eventData.data.attributes.location_GPS) ; 
+
+       // console.log("Event details :", JSON.stringify(eventData.data));
         //numCat = eventData.data.attributes.attendee_catagories.length  ; 
         setNumCat(eventData.data.attributes.attendee_catagories.length); 
         setEventCat( eventData.data.attributes.event_catagories ) ; 
@@ -113,13 +118,17 @@ export default function Enrollment() {
                 className="accordion-flush faq-accordion"
                 defaultActiveKey="0"
               >
-                <Accordion.Item eventKey="0">
+                <Accordion.Item eventKey="0" style={{ backgroundImage: `url('./kothrud_lsom.jpeg')`, backgroundSize: 'cover', backgroundPosition: 'right center', backgroundRepeat: 'no-repeat' }}>
                   <Accordion.Header>
                     {" "}
                     <span>Event Details</span> <IoIosArrowDown />{" "}
                   </Accordion.Header>
                   <Accordion.Body>
+      
+
                   <h2> Registering for Event : {event_name} </h2> 
+                  <h4> Address : { location_address } </h4>
+                  <h4> <a href={ location_GPS}>Click here for GPS Location</a>  </h4>
                   {numCat > 1  ? (
                         <div className="popular">
                           <Attendee_Catagories attendee_catagories={attendeeCat}/> 

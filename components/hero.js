@@ -8,7 +8,7 @@ const Hero = () => {
   return (
     <div
       className="hero bg-image"
-      style={{ backgroundImage: "url(/images/hero-bg.jpg)" }}
+      style={{ backgroundImage: "url(/images/hero2-bg.jpg)" }}
     >
       <div className="hero__wrapper">
         <div className="container">
