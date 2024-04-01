@@ -12,7 +12,7 @@ import axios from "axios";
 import Attendee_Catagories from '../../components/Attendee_catagories';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
-import termsPage from './tos';
+
 
 
 

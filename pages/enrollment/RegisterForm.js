@@ -7,7 +7,7 @@ import { API_URL } from "../../config";
 import Col from 'react-bootstrap/Col';
 import axios from "axios";
 import { useRouter } from 'next/router';
-import termsPage from './tos';
+
 
 
 const makePayment = async (event) => {
