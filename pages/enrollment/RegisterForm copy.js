@@ -178,7 +178,6 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
    // event_c = event.target.form.event_catagory.valuecd   ; 
   
   //console.log( "got form data" + JSON.stringify(event) ) ; 
- console.log( "registering for event-" + event_id  +'b'+  event.target.blood_group.value + 'e' + event.target.emergency_contact.value +'c' + event.target.emergency_name.value)  ; 
 
   const result = await  axios.post(`${API_URL}/api/event-enrollments/`, {
         data  : {  full_name : event.target.fullName.value ,
@@ -189,16 +188,14 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
                  gender : event.target.gender.value , 
                  blood_group : event.target.blood_group.value , 
                  emergency_contact_name:  event.target.emergency_name.value ,
-                 emergency_contact_number:  event.target.emergency_contact.value , 
-                 event_name : event.target.event_name.value ,
+                 emergency_contact_number:  event.target.emergency_contact.value ,
 
               } 
 
      },   { headers: new Headers({'content-type': 'application/json'} ) }    
   ) 
   .then(response => {
-   
-    console.log( "enrollment id is  " + response.data.data.id) ; 
+  console.log( "enrollment id is  " + response.data.data.id) ; 
   //setEnrollmentId(response.data.data.id) ; 
   //console.log( "response in then is ", JSON.stringify(response)); 
 
@@ -225,12 +222,11 @@ function RegisterForm ({event}) {
 
   const [price,setPrice] = useState(event?.data?.attributes?.price) ; 
   const [event_name , setEventName] = useState(event?.data?.attributes?.name)
-  const [event_id , setEventId ] = useState(event?.data?.attributes?.id ); 
   const [enrollmentId,setEnrollmentId] = useState(0) ; 
   
   const [isInputEnabled, setIsInputEnabled] = useState(true);
   
-  //const event_id = event?.data?.attributes?.id ; 
+  const event_id = event?.data?.attributes?.id ; 
 
   const [statusMessage , setStatusMessage] = useState(""); 
   //console.log("got event as " + JSON.stringify(event.data)) ; 
@@ -240,11 +236,10 @@ function RegisterForm ({event}) {
   const basePrice = event?.data?.attributes?.price ; 
   const event_cat = event?.data?.attributes?.event_catagories  ;
   const charges = event?.data?.attributes?.charges ; 
-
-  //console.log( "got event as " + JSON.stringify(event)) ; 
+  
   //setPrice(basePrice) ;
 
-  //console.log ( "in register got the basepriceas " + basePrice)   ; 
+  console.log ( "in register got the basepriceas " + basePrice)   ; 
   //const event  = getEvent(event_id) ; 
   
   const [validated, setValidated] = useState(false);
@@ -255,16 +250,15 @@ function RegisterForm ({event}) {
   
   //function calculateCharges(catagories  , charges , event_catagory_selected ) { 
   
-    function handleEventCatChange(event) { 
-      //console.log("new value is "  , event.target.value) ; 
-      setField('event_catagory', event.target.value ) ; 
+    function handleChange(event) { 
+      console.log("new value is "  , event.target.value) ; 
       setPrice(calculateCharges(event.target.value , basePrice)); 
     
     }
   
   function calculateCharges( event_catagory_selected  ,basePrice) {   
     
-    //console.log( "looking for" + event_catagory_selected + "in " + JSON.stringify(event_cat) + "base price is " + basePrice) ; 
+    console.log( "looking for" + event_catagory_selected + "in " + JSON.stringify(event_cat) + "base price is " + basePrice) ; 
   
     for (var i = 0; i < event_cat.length; i++) {
       if (event_cat[i].event_catagory == event_catagory_selected ) {
@@ -289,20 +283,17 @@ function RegisterForm ({event}) {
   
   const [agree, setAgree] = useState(false);
 
-  const [isChecked, setIsChecked] = useState(false)
-   
+  const [checked, setChecked] = useState(false); 
+   function handleChange(e) {
+      setChecked(e.target.checked);
+   }
 
-   const checkHandler = () => {
-    //console.log( "in handler the value of checked is " + agree)  ; 
-    setIsChecked(!isChecked);
-    //setField("agree", isChecked);
-  }
 
   const checkboxHandler = () => {
     // if agree === true, it will be set to false
     // if agree === false, it will be set to true
     //setAgree(!agree);
-    //console.log ( "agree is" , agree) ; 
+    console.log ( "agree is" , agree) ; 
     if (agree == true) {
       setStatusMessage ( "Agree the terms before saving") ; 
       setAgree(true);
@@ -317,7 +308,6 @@ function RegisterForm ({event}) {
   const [ errors, setErrors ] = useState({})
 
   const setField = (field, value) => {
-    //console.log( "field is " + field + "value is " + value) ; 
     setForm({
       ...form,
       [field]: value
@@ -329,66 +319,19 @@ function RegisterForm ({event}) {
     })
   }
 
-  const handleSubmit  = async (data) => {
-    data.preventDefault()
-    //console.log ( "got this as data "+ JSON.stringify( data)) ; 
+  const handleSubmit = e => {
+    console.log( "in handleSubmit"); 
+    e.preventDefault()
     // get our new errors
     const newErrors = findFormErrors()
     // Conditional logic:
     if ( Object.keys(newErrors).length > 0 ) {
+      console.log ( "got some errors"); 
       // We got errors!
-      console.log( "still some errors" + JSON.stringify(newErrors) );
-      setErrors(newErrors) ;  
-      if (!isChecked) {
-        console.log( "terms not agreed") ; 
-        setStatusMessage("Terms and conditions need to be accepted.") ; 
-      }
-      
+      setErrors(newErrors)
     } else {
       // No errors! Put any logic here for the form submission!
-      //console.log( "ischecked is ", isChecked ); 
-      setStatusMessage("") ; 
-
-      if (!isChecked) {
-        //console.log( "terms not agreed") ; 
-        setStatusMessage("Terms and conditions need to be accepted.") ; 
-      }
-      else  { 
-        //setStatusMessage("Saving Data") ;  
-        //alert('Thank you for your feedback!') ;
-        
-        try { 
-
-          data.preventDefault();
-          data.stopPropagation();
-
-          const id =  await registerForEvent(data , event_id )  ; 
-          setEnrollmentId(id) ;  
-  
-          console.log ( "done registration successfully" + id ) ; 
-          
-          setPrice(calculateCharges(data?.target?.event_catagory?.value,basePrice)) ;
-  
-          setIsInputEnabled(false) ; 
-          //setPrice(price) ;
-  
-          //console.log( "price for the event" , price );
-
-          if ( price > 0 )
-            { setStatusMessage("Data saved , complete the payment ") ;
-           // sendMail(event_name , data.target.enrollmentId.value , data.target.fullName.value  ,data.target.event_catagory.value , data.target.email.value , "Welcome" ) ; 
-          }  
-          else 
-            setStatusMessage("Your registration is successful.") ; 
-          
-            return ;
-
-   
-      } catch (error ){ 
-          console.error(error) ; 
-      }
-      
-    }
+      alert('Thank you for your feedback!')
     }
   }
 
@@ -396,51 +339,22 @@ function RegisterForm ({event}) {
     const { email , mobile, fullName , gender , blood_group, event_catagory , emergency_name, emergency_contact  } = form
     const newErrors = {}
     // name errors
-    if ( !fullName || fullName === '' ) newErrors.fullName = 'full name cannot be blank!'
-    if ( !email || email === '' ) newErrors.email = 'email cannot be blank!' ; 
-  
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    const isValidEmail = emailRegex.test(email);
-    if (!isValidEmail) { 
-       newErrors.email = 'email seems in incorrect format!' ; 
-    }
+    if ( !fullName || fullName === '' ) newErrors.fullName = 'cannot be blank!'
+    if ( !email || email === '' ) newErrors.email = 'cannot be blank!'
     if ( !mobile || mobile === '' ) newErrors.mobile = 'cannot be blank!'
-    else if ( isNaN(mobile) ||  ( mobile.length !=10 )) { 
-      newErrors.mobile = 'mobile number should be of 10 digits' ; 
-    }
-
-    if ( !gender || gender === '' ) newErrors.gender = 'gender should be selected'
-    if ( !blood_group || blood_group === '' ) newErrors.blood_group = 'blood group should be selected.'
-    if ( !event_catagory || event_catagory === '' ) newErrors.event_catagory = 'event catagory should be selected.'
+    if ( !gender || gender === '' ) newErrors.gender = 'cannot be blank!'
+    if ( !blood_group || blodd_group === '' ) newErrors.blood_group = 'cannot be blank!'
+    if ( !event_catagory || event_catagory === '' ) newErrors.event_catagory = 'cannot be blank!'
     if ( !emergency_name || emergency_name === '' ) newErrors.emergency_name = 'cannot be blank!'
     if ( !emergency_contact || emergency_contact === '' ) newErrors.emergency_contact = 'cannot be blank!'
-    else if ( isNaN(emergency_contact) ||  ( emergency_contact.length!=10 )) { 
-      newErrors.emergency_contact = 'emergency mobile number should be of 10 digits' ; 
-    }
-
-    if ( fullName == emergency_name) {
-      newErrors.emergency_name = 'applicant name and emergency contact name cant be same' ; 
-    }
-    if ( mobile == emergency_contact) {
-      newErrors.emergency_contact = 'applicant mobile and emergency contact mobile cant be same' ; 
-    }
-    /*
-    console.log ( "value of agree-" + isChecked +"-" ) ;
-    if ( agree == false ) { 
-      console.log ( "terms need to agree") ; 
-      newErrors.agree = 'Terms and conditions need to be agreed. ';  }
-      else { console.log( "terms already agreed" ); 
-        //newErrors.agree =''; 
-    }
-    */
+  
 
     return newErrors
   }
-  
-  
+
   
   const handleSubmit2 =  async (data) => {
-      //console.log ( "Got in validation ") ; 
+      console.log ( "Got in validation ") ; 
 
       const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
       const isValidEmail = emailRegex.test(data.target.email.value);
@@ -550,11 +464,9 @@ function RegisterForm ({event}) {
     };
   
   return (
+<div> 
 
-<div className='App d-flex flex-column align-items-center'>
-
-  
-<Form style={{ width: '400px' }}  noValidate validated={validated} onSubmit={handleSubmit} >
+<Form style={{ width: '300px' }}>
         <Form.Group>  
                       <FloatingLabel
                         label="Event Name"
@@ -582,7 +494,7 @@ function RegisterForm ({event}) {
           label="Mobile "
           className="mb-3"
         >
-          <Form.Control type="number" id = "mobile" placeholder="enter your Mobile Number" required disabled={!isInputEnabled}
+          <Form.Control type="input" id = "mobile" placeholder="enter your Mobile Number" required disabled={!isInputEnabled}
             onChange={ e => setField('mobile', e.target.value) }
             isInvalid={ !!errors.mobile }
           />
@@ -611,7 +523,7 @@ function RegisterForm ({event}) {
           
           <option value="Male">Male</option>
           <option value="Female">Female</option>
-          <option value="Others">Others</option>
+          <option value="Others">Other</option>
          
         </Form.Select>
       </FloatingLabel>
@@ -640,11 +552,11 @@ function RegisterForm ({event}) {
   
       {event_cat &&   (
       <FloatingLabel label="Select Event Catagory" className="mb-3" required >
-        <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={  handleEventCatChange} required disabled={!isInputEnabled || event_cat.length==0 }
+        <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleChange} required disabled={!isInputEnabled || event_cat.length==0 }
           as='select' 
+       
           isInvalid={ !!errors.event_catagory}
         >
-           <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
         <option></option>
         {event_cat && 
           event_cat.map(d => (<option value={d.event_catagory}>{d.event_catagory_desc}</option>))} 
@@ -658,7 +570,7 @@ function RegisterForm ({event}) {
           className="mb-3"
         >
           <Form.Control type="input" id="emergency_name" placeholder="enter emergency contact name" required disabled={!isInputEnabled} 
-               onChange={ e => setField('emergency_name', e.target.value) }
+               onChange={ e => setField('fullName', e.target.value) }
                isInvalid={ !!errors.emergency_name }
           />
           <Form.Control.Feedback type='invalid'>{ errors.emergency_name}</Form.Control.Feedback>
@@ -668,7 +580,7 @@ function RegisterForm ({event}) {
           label="Emergency Contact Number"
           className="mb-3"
         >
-          <Form.Control type="number" id="emergency_contact" placeholder="enter your emergency contact number" required disabled={!isInputEnabled} 
+          <Form.Control type="input" id="emergency_contact" placeholder="enter your emergency contact number" required disabled={!isInputEnabled} 
                onChange={ e => setField('emergency_contact', e.target.value) }
                isInvalid={ !!errors.emergency_contact }
           />
@@ -697,31 +609,22 @@ function RegisterForm ({event}) {
 
                       <div>
 
-      <Form.Group> 
-
-      <Form.Check
-            inline
-            label="I agree with Terms and conditions"
-            name="agree"
-            type="checkbox"
-            id="agree"
-            checked={isChecked}
-            onChange={checkHandler}
-            isInvalid={ !!errors.isChecked }
-            />
-
-      <Form.Control.Feedback type='invalid'> Terms and Conditions need to be agreed</Form.Control.Feedback>
-                
-
-      </Form.Group>
-                    
+                      <div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="agree" onChange = {handleChange}/>
+  <label class="form-check-label" for="agree">
+    I agree to Terms and conditions ( To view Terms and conditions , click on Terms and conditions block below)  
+  </label>
+ 
+</div>
           
         </div>
  
   
-        <div style={{ color: 'red' }}> <p> {statusMessage}</p> </div>
+                      <p> {statusMessage}</p> 
   
-      <Button type="submit"  disabled={!isInputEnabled} >Register</Button>{' '}
+  
+     
+      <Button type="submit" onClick={ handleSubmit } disabled={!isInputEnabled} >Register</Button>{' '}
       
       <Button onClick={makePayment} disabled={isInputEnabled || price <= 0 } >Go For Payment</Button>{' '}
 
