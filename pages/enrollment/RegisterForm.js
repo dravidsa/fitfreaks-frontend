@@ -8,7 +8,10 @@ import Col from 'react-bootstrap/Col';
 import axios from "axios";
 import { useRouter } from 'next/router';
 
+ //const termsLink = "<a href='#' onClick=${handleLinkClick}>Click here for terms and conditions</a>"; 
+ 
 
+  
 
 const makePayment = async (event) => {
   console.log("here...");
@@ -221,7 +224,8 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
 }
 
 
-function RegisterForm ({event}) {
+
+function RegisterForm ({event ,openTab3}) {
 
   const [price,setPrice] = useState(event?.data?.attributes?.price) ; 
   const [event_name , setEventName] = useState(event?.data?.attributes?.name)
@@ -254,7 +258,15 @@ function RegisterForm ({event}) {
   //console.log ( "event cat are ", JSON.stringify(eventCat)) ; 
   
   //function calculateCharges(catagories  , charges , event_catagory_selected ) { 
-  
+
+    const termsLink = '<a href="#" onClick={handleLinkClick}>Click here for terms and conditions</a>';
+
+    const handleLinkClick = () => {
+      // Simulate clicking a URL
+      openTab3(); // Call the callback function to open Tab 3
+    };
+    
+
     function handleEventCatChange(event) { 
       //console.log("new value is "  , event.target.value) ; 
       setField('event_catagory', event.target.value ) ; 
@@ -341,7 +353,7 @@ function RegisterForm ({event}) {
       setErrors(newErrors) ;  
       if (!isChecked) {
         console.log( "terms not agreed") ; 
-        setStatusMessage("Terms and conditions need to be accepted.") ; 
+        setStatusMessage("Terms and conditions need to be agreed.") ; 
       }
       
     } else {
@@ -363,6 +375,10 @@ function RegisterForm ({event}) {
           data.stopPropagation();
 
           const id =  await registerForEvent(data , event_id )  ; 
+          if ( id ==0) {
+            setStatusMessage("Some error in saving the record, please retry") ;
+            return ; 
+          }
           setEnrollmentId(id) ;  
   
           console.log ( "done registration successfully" + id ) ; 
@@ -437,8 +453,7 @@ function RegisterForm ({event}) {
     return newErrors
   }
   
-  
-  
+
   const handleSubmit2 =  async (data) => {
       //console.log ( "Got in validation ") ; 
 
@@ -545,7 +560,7 @@ function RegisterForm ({event}) {
    
   
   
-      
+    
   
     };
   
@@ -554,7 +569,7 @@ function RegisterForm ({event}) {
 <div className='App d-flex flex-column align-items-center'>
 
   
-<Form style={{ width: '400px' }}  noValidate validated={validated} onSubmit={handleSubmit} >
+<Form style={{ width: 'max-width' }}  noValidate validated={validated} onSubmit={handleSubmit} >
         <Form.Group>  
                       <FloatingLabel
                         label="Event Name"
@@ -698,10 +713,9 @@ function RegisterForm ({event}) {
                       <div>
 
       <Form.Group> 
-
+     
       <Form.Check
             inline
-            label="I agree with Terms and conditions"
             name="agree"
             type="checkbox"
             id="agree"
@@ -709,12 +723,14 @@ function RegisterForm ({event}) {
             onChange={checkHandler}
             isInvalid={ !!errors.isChecked }
             />
-
-      <Form.Control.Feedback type='invalid'> Terms and Conditions need to be agreed</Form.Control.Feedback>
+            <Form.Label>
+            <a href="#" onClick={handleLinkClick}>I agree with Terms and Conditions</a>
+        </Form.Label>
+          <Form.Control.Feedback type='invalid'> Terms and Conditions need to be agreed</Form.Control.Feedback>
                 
 
       </Form.Group>
-                    
+      
           
         </div>
  
