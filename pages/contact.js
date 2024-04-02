@@ -19,9 +19,7 @@ const Contact = () => {
             <div className="col-md-8 col-lg-6 mx-auto text-center">
               <h2 className="title">Contact Us</h2>
               <p className="description">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Eligendi eveniet officia officiis omnis magnam totam placeat
-                odio voluptas cum adipisci.
+                Drop us a mail from this page and we would try to get back to you in 24 hours. 
               </p>
             </div>
           </div>
@@ -32,8 +30,7 @@ const Contact = () => {
               <form action={CONTACT_FORM} method="post" className="contact-form">
                 <h3>Send us a message</h3>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Laboriosam, odit.
+            
                 </p>
                 <div className="row my-3">
                   <div className="col-md-6 mb-3">
