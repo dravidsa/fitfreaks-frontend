@@ -42,6 +42,8 @@ export default function Enrollment() {
   const [attendeeCat,setAttendeeCat] = useState() ; 
   const [basePrice , setBasePrice] = useState(-1) ; 
   const [terms, setTerms] = useState(""); 
+  const [activeKey, setActiveKey] = useState('1'); // Initial active tab is Tab 1
+
 
   
 
@@ -102,7 +104,15 @@ export default function Enrollment() {
   if (loading) {
     return <div>Loading...</div>; // Display a loading indicator until basePrice is set
   }
-  
+
+ 
+  const handleAccordionSelect = (selectedKey) => {
+    setActiveKey(selectedKey);
+  };
+
+  const openTab3 = () => {
+    setActiveKey('2'); // Open Tab 3
+  };
 
 
   return (
@@ -117,6 +127,7 @@ export default function Enrollment() {
               <Accordion
                 className="accordion-flush faq-accordion"
                 defaultActiveKey="0"
+                activeKey={activeKey} onSelect={handleAccordionSelect}
               >
                 <Accordion.Item eventKey="0" style={{ backgroundImage: `url('./kothrud_lsom.jpeg')`, backgroundSize: 'cover', backgroundPosition: 'right center', backgroundRepeat: 'no-repeat' }}>
                   <Accordion.Header>
@@ -144,7 +155,7 @@ export default function Enrollment() {
                     <span>Attendee Details</span> <IoIosArrowDown />
                   </Accordion.Header>
                   <Accordion.Body>
-                  <RegisterForm event={event}  />
+                  <RegisterForm event={event} openTab3={openTab3} />
                   </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="2">
@@ -153,7 +164,7 @@ export default function Enrollment() {
                     <span>Terms and Conditions</span> <IoIosArrowDown />
                   </Accordion.Header>
                     <Accordion.Body>
-                  {terms}
+                    <div dangerouslySetInnerHTML={{ __html: terms }} />
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>

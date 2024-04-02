@@ -49,10 +49,7 @@ export default function Home({ events, blogs, groups  , coaches}) {
       <Coaches coaches={coachData} /> 
 
       <HowItWorks />
-      <FeaturedEvents events={eventsData} />
-      <Testimonial />
-      <RecentBlog blogs={blogsData} />
-      
+    
 
     </Layout>
   );
