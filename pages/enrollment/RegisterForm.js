@@ -59,7 +59,7 @@ const makePayment = async (event) => {
   
       //pass event_name , enrollmentID , customer_name , event_catagory , email , subject 
       const emailSubject =  "You are in . Your registration for event - " + event.target.form.event_name.value + " is successful" ; 
-      sendMail(event.target.form.event_name.value , event.target.form.enrollmentId.value , event.target.form.fullName.value  ,event.target.form.event_catagory.value , event.target.form.email.value , emailSubject ) ; 
+      sendMail(event.target.form.event_name.value , event.target.form.enrollmentId.value , event.target.form.fullName.value  ,event.target.form.event_catagory.value , event.target.form.email.value , emailSubject , "registration" , "" ) ; 
       //sendMail(event_name , event.target.form.enrollmentId.value , event.target.form.fullName.value  ,event.target.form.event_catagory.value , event.target.form.email.value , emailSubject ) ; 
       console.log (response.razorpay_payment_id);
       console.log(response.razorpay_order_id);
@@ -97,7 +97,7 @@ const initializeRazorpay = () => {
   });
 };
 
-async function sendMail(event_name , enrollmentID , customer_name , event_catagory , email , subject ) {
+async function sendMail(event_name , enrollmentID , customer_name , event_catagory , email , subject , template , query ) {
 
 const mailData =  {
   enrollmentID : enrollmentID , 
@@ -105,7 +105,9 @@ const mailData =  {
   event_name : event_name ,
   event_catagory : event_catagory , 
   email : email  , 
-  subject : subject 
+  subject : subject ,
+  template: template , 
+  query : query 
 
 }
 

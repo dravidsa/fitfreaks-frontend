@@ -3,7 +3,8 @@ import Link from "next/link";
 import React from "react";
 import { FaFacebookF, FaTwitter, FaWhatsapp, FaYoutube } from "react-icons/fa";
 
-const Footer = () => {
+const Footer = ({contactData}) => {
+  //const contact_number = contactData.contact_number ; 
   return (
     // <!-- ========== Footer section End ========== -->
     <>
@@ -17,10 +18,10 @@ const Footer = () => {
                   Feel free to contact us.
                 </h2>
                 <h2 className="display-4">
-                  <Link href="tel:610383766284">+0123456789</Link>
+                  <Link href="tel:610383766284">+9922955408</Link>
                 </h2>
                 <Link href="/contact" className="smooth button button__primary" legacyBehavior>
-                  <span>Send me a message</span>
+                  <span>Send me a message @ support@fitfreaks.in</span>
                 </Link>
               </div>
             </div>
@@ -89,3 +90,14 @@ const Footer = () => {
 };
 
 export default Footer;
+export async function getStaticProps() {
+  const res = await fetch(`${API_URL}/api/contact-us`);
+  const contactData = await res.json();
+  console.log ( "got his contact data " + JSON.stringify(contactData));  
+
+  return {
+    props: { contactData },
+    revalidate: 1,
+  };
+}
+
