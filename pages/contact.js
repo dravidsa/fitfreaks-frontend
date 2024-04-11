@@ -6,6 +6,39 @@ import { IoIosArrowDown } from "react-icons/io";
 import { CONTACT_FORM } from "../config";
 import { API_URL } from "../config";
 
+async function sendMail(event_name , enrollmentID , customer_name , event_catagory , email , subject , template , query ) {
+
+  const mailData =  {
+    enrollmentID : enrollmentID , 
+    customer_name : customer_name , 
+    event_name : event_name ,
+    event_catagory : event_catagory , 
+    email : email  , 
+    subject : subject ,
+    template: template , 
+    query : query 
+  
+  }
+  
+  const data = await fetch("/api/sendMail", { method: "POST"  , 
+  
+    headers: {
+      'Content-Type': 'application/text',
+    },
+    body: JSON.stringify(mailData )  ,
+  }
+    
+    ).then((t) =>
+      t.json()
+    );
+    
+    //console.log( "JSON request is ",JSON.stringify(userData) )
+  
+  } 
+  
+  const handleSubmit  = async (data) => {
+  console.log( "in submit data is " + JSON.stringify(data)) ; 
+  }
 
 
 const Contact = ({contactData}) => {
@@ -47,7 +80,7 @@ const Contact = ({contactData}) => {
         <div className="container">
           <div className="row">
             <div className="col-md-8 col-lg-6 mx-auto">
-              <form action={CONTACT_FORM} method="post" className="contact-form">
+              <form  method="post" className="contact-form" onSubmit={handleSubmit}>
                 <h3>Send us a message</h3>
                 <p>
             

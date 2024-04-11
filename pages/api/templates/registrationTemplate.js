@@ -3,7 +3,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function  RegistrationTemplate({name , event_catagory , enrollmentID }) {
+export default function  RegistrationTemplate({name , event_catagory , enrollmentID ,event_name}) {
   return (
     <>
     <p>
@@ -25,7 +25,7 @@ export default function  RegistrationTemplate({name , event_catagory , enrollmen
         <p>
 
         </p>
-        <p> Thank you for your registration for <b> April LSOM - Kothrud </b> .  
+        <p> Thank you for your registration for <b> {event_name} </b> .  
         </p>
         <p>
                Event Category  :  <b> {event_catagory} </b> 
