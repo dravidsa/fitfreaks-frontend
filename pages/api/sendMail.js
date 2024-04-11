@@ -4,15 +4,12 @@ import ReactDOMServer from 'react-dom/server'
 import RegistrationTemplate from "./templates/RegistrationTemplate" ; 
 
 export default async function sendMail(req,res) {
-console.log  ( "in send api") ; 
-/*
-enrollmentID : enrollmentID , 
-customer_name : customer_name , 
-event_name : event_name ,
-event_catagory : event_catagory , 
-email : email  , 
-subject : subject
-*/ 
+    const EMAIL_USER =  process.env.EMAIL_USER ; 
+    const EMAIL_PASS =  process.env.EMAIL_PASS ; 
+    const SMTP_HOST  =  process.env.SMTP_HOST ; 
+    const SMTP_PORT  =  process.env.SMTP_PORT ; 
+
+    console.log  ( "in send api" + EMAIL_USER , EMAIL_PASS, SMTP_HOST , SMTP_PORT) ; 
 
     const jsonString  = req.body;
     console.log ( "JSON is " + JSON.stringify(jsonString) ); 
@@ -35,14 +32,17 @@ subject : subject
 
     if ( template == "registration") {  
 
-    HTMLBody = ReactDOMServer.renderToStaticMarkup(<RegistrationTemplate name="Sandeep Dravid" event_catagory="10Km Run" enrollmentID="1234"/>);
+        HTMLBody = ReactDOMServer.renderToStaticMarkup( 
+        <RegistrationTemplate
+        name={customer_name}
+        event_catagory={event_catagory}
+        enrollmentID={enrollmentID}
+        event_name={event_name}
+    />
+    );
 
-    var message_body = 'Dear ' + customer_name  + '\n' ; 
-    message_body = message_body + 'Your registration for event - ' + event_name + ' is successful \n' ; 
-    message_body = message_body + 'Enrollment ID : ' + enrollmentID  + '\n' ; 
-    message_body = message_body + 'Event Catagory : ' + event_catagory + '\n' ;
-    //console.log ( "Message is " + message_body );
-    from = "support@fitfreaks.in" ; 
+    
+    from = EMAIL_USER ; 
     to = email  ; 
     }
     
@@ -51,31 +51,32 @@ subject : subject
 
         message_body = data.query ; 
         from = email ; 
-        to = "support@fitfreaks.in" ; 
+        to = EMAIL_USER ; 
     }
         var nodemailer = require('nodemailer');
       
         // create reusable transporter object using the gmail transport
         var transporter = nodemailer.createTransport({
-            host: "smtp.zoho.in" ,
+            host: SMTP_HOST ,
             secure: true,
-            port: 465,
+            port: SMTP_PORT,
             auth: {
-                user: 'support@fitfreaks.in',
-                pass: 'Cloud@6698'
+                user: EMAIL_USER,
+                pass: EMAIL_PASS
             }
         });
         
         var mailOptions = {
-            from: 'support@fitfreaks.in',                   // sender's gmail
-            to: email  ,                  // receiver's gmail
+            from: from,                   // sender's gmail
+            to: to ,                  // receiver's gmail
             subject: subject,     //subject
             html: HTMLBody   ,
             headers: {
                 'Content-Type': 'text/html'
             }                     
         };
-        
+        console.log("mailoptions are " , JSON.stringify(mailOptions)) ; 
+
         //send mail using transport object’s sendMail() function
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
