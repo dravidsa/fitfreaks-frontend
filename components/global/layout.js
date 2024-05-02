@@ -20,6 +20,6 @@ export default function Layout({ title, keywords, description, username , childr
 
 Layout.defaultProps = {
   title: "FitFreaks - a Fitness community ",
-  description: "Event booking & Ticketing platform ",
-  keywords: "event",
+  description: "Event Booking , Ticketing  and Fitness coaching platform ",
+  keywords: "events ,fitness ,groups, coaching"
 };

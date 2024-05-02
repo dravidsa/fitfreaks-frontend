@@ -31,7 +31,7 @@ const HowItWorks = () => {
                                 03
                             </div>
                             <h3>Coaches</h3>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime, rerum Array too!</p>
+                            <p>Coaches get a platform to showcase their skills , acquire new customers , train them remotely and even collect the payments  </p>
                            </div>
                         </div>
                         <div className="col-md-6 col-lg-4 mb-4 mb-lg-0 text-center">

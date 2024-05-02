@@ -53,7 +53,7 @@ const handleSubmit =  async (data) => {
           console.log ( "jwt = " + jwt  + "user is -" + username) ; 
           <AuthButton username="from l"/> 
           push('/');
-          resetForm();
+          //resetForm();
       })
       .catch(error => {
           if ( !error.response.data.message ) {

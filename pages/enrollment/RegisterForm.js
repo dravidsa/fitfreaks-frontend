@@ -571,7 +571,7 @@ function RegisterForm ({event ,openTab3}) {
 <div className='App d-flex flex-column align-items-center'>
 
   
-<Form style={{ width: 'max-width' }}  noValidate validated={validated} onSubmit={handleSubmit} >
+<Form style={{ width: "max-width" }}  noValidate validated={validated} onSubmit={handleSubmit} >
         <Form.Group>  
                       <FloatingLabel
                         label="Event Name"

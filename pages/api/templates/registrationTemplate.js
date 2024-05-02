@@ -17,6 +17,7 @@ export default function  RegistrationTemplate({name , event_catagory , enrollmen
         <Col>
         <p>
           
+          
         </p>
        <p>
 
