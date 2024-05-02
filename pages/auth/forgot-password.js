@@ -18,16 +18,16 @@ const ForgotPassword = () => {
         setAlert();
 
         axios
-            .post('/auth/forgot-password', values)
+            .post('/api/auth/forgot-password', values)
             .then(response => {
                 const message = `Please check your email to reset your password.`;
                 setAlert(['success', message]);
 
-                resetForm();
+                //resetForm();
             })
             .catch(error => {
                 if ( !error.response.data.message ) {
-                    setAlert(['alert', "Something went wrong"])
+                    setAlert(['alert', "Something went wrong" + JSON.stringify(error) ])
                 } else {
                     const messages = error.response.data.message[0].messages;
 

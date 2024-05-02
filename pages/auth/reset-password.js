@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 const ResetPassword = () => {
     const { push, query } = useRouter();
     const [alert,setAlert] = useState();
-
+    console.log ( "in reset password ")  ; 
     const initialValues = {
         password: "",
         passwordConfirmation: "",
@@ -22,9 +22,10 @@ const ResetPassword = () => {
         setAlert();
 
         values.code = query.code;
+        console.log ( "code is " , JSON.stringify(values)) ; 
 
         axios
-            .post('auth/reset-password', values)
+            .post('api/auth/reset-password', values)
             .then(response => {
                 const message = `Your password has been resetted. In a few second you'll be redirected to login page.`;
                 setAlert(['success', message]);
