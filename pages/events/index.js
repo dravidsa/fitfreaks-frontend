@@ -13,6 +13,7 @@ import Link from "next/link";
 import { API_URL } from "../../config";
 import Pagination from "../../components/pagination";
 import InnerPageLayout from "../../components/inner-page-layout";
+import Button from 'react-bootstrap/Button';
 
 const EventPage = ({events}) => {
   const [key, setKey] = useState("AllEvents");
@@ -49,11 +50,14 @@ const EventPage = ({events}) => {
             <div key={evt.id} className="col-md-6 col-lg-4 mb-4">
               <div className="upcoming-events__item">
                 <div className="image">
+                <a target="_self" href={`/events/${evt?.attributes?.slug}`}>
                   <img
                     className="img-fluid"
                     src={`${API_URL}${evt.attributes?.image?.data?.attributes.url}`}
                     alt={evt.attributes.image.data.attributes.name}
                   />
+                  </a>
+
                   {evt?.attributes?.eventType !== "none" ? (
                         <div className="popular">
                           {evt?.attributes?.eventType}
@@ -70,7 +74,7 @@ const EventPage = ({events}) => {
                   </div>
                   <div className="d-flex align-items-center justify-content-between mb-2">
                     <div className="price d-flex align-items-center gap-2">
-                      Rs.  <span>{evt.attributes.price}</span>
+                      Rs.<span>{evt.attributes.price}</span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <ImTicket />{" "}
@@ -89,6 +93,8 @@ const EventPage = ({events}) => {
                       <ImClock />
                       <span>{evt.attributes.time.slice(0, 5)}</span>
                     </div>
+                    
+
                   </div>
                 </div>
               </div>
@@ -111,14 +117,16 @@ const EventPage = ({events}) => {
             <div key={evt.id} className="col-md-6 col-lg-4 mb-4">
               <div className="upcoming-events__item">
                 <div className="image">
+                  
                   <img
                     className="img-fluid"
                     src={`${API_URL}${evt.attributes?.image?.data?.attributes.url}`}
                     alt={evt.attributes.image.data.attributes.name}
                   />
+                  
                  {evt?.attributes?.eventType !== "none" ? (
                         <div className="popular">
-                          {evt?.attributes?.eventType}
+                          n {evt?.attributes?.eventType}
                         </div>
                       ) : (
                         ""
