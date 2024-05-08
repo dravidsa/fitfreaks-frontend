@@ -14,7 +14,7 @@ import { useRouter } from 'next/router';
   
 
 const makePayment = async (event) => {
-  console.log("here...");
+ // console.log("here...now 1");
   //const router = useRouter();
   const res = await initializeRazorpay();
 
