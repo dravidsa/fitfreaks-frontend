@@ -3,7 +3,7 @@ import Footer from "./Footer";
 import Header from "./Header";
 
 export default function Layout({ title, keywords, description, username , children }) {
-  console.log ( "got username as "+ username ) ; 
+  console.log ( "got username as -"+ username +"-") ; 
   return (
     <div>
       <Head>

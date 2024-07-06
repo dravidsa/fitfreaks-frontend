@@ -52,7 +52,7 @@ const GroupsPage = ({groups}) => {
                   <img
                     className="img-fluid"
                     src={`${API_URL}${grp.attributes?.image?.data?.attributes.url}`}
-                    alt={grp.attributes.image.data.attributes.name}
+                    alt={grp?.attributes?.image?.data?.attributes?.name}
                   />
                   {grp?.attributes?.sport !== "none" ? (
                         <div className="popular">
@@ -65,7 +65,7 @@ const GroupsPage = ({groups}) => {
                 <div className="upcoming-events__item__info">
                   <div className="title">
                     <h3>
-                      <Link href={`/groups/${grp?.attributes?.id}`} legacyBehavior>{grp?.attributes?.name}</Link>
+                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
                     </h3>
                   </div>
                   

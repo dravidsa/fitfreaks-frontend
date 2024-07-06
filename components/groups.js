@@ -57,7 +57,7 @@ const Groups = ({ groups }) => {
                       <img
                         className="img-fluid"
                         src={`${API_URL}${group.attributes?.image?.data?.attributes.url}`}
-                        alt={group.attributes.image.data.attributes.name}
+                        alt={group?.attributes?.image?.data?.attributes?.name}
                       />
                       {group?.attributes?.sport !== "none" ? (
                         <div className="popular">

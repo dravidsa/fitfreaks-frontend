@@ -136,7 +136,7 @@ const Register = () => {
             username : data.target.email.value , 
             email : data.target.email.value , 
             password : data.target.password.value ,
-            role : "1" 
+            role : 0
 
           }
          
@@ -159,9 +159,9 @@ const Register = () => {
                
               })
               .catch(error => {
-                setError( "Error in registering user , please try again. ") ; 
-                console.log ( "error is " ,JSON.stringify(error)) ;
-                resetForm();  
+                setError( "Error in registering user. Error : "+error.response.data.error.message) ; 
+                console.log ( "error is " ,JSON.stringify(error.response.data.error.message)) ;
+                //resetForm();  
               })
               .finally(() => {
                  // setSubmitting(false);

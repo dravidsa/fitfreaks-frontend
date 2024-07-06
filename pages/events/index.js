@@ -70,13 +70,14 @@ const EventPage = ({events}) => {
                   </div>
                   <div className="d-flex align-items-center justify-content-between mb-2">
                     <div className="price d-flex align-items-center gap-2">
-                      Rs.  <span>{evt.attributes.price}</span>
+                      Rs.XXX <span>{evt.attributes.price}</span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <ImTicket />{" "}
                       <span>{evt.attributes.tickets} remaining</span>
                     </div>
                   </div>
+                  
                   <div className="d-flex align-items-center gap-2 mb-2">
                     <ImLocation2 /> <span>{evt.attributes.location}</span>
                   </div>

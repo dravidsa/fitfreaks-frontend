@@ -42,6 +42,7 @@ export default function Enrollment() {
   const [attendeeCat,setAttendeeCat] = useState() ; 
   const [basePrice , setBasePrice] = useState(-1) ; 
   const [terms, setTerms] = useState(""); 
+  const [eventStatus, setStatus] = useState(""); 
   const [activeKey, setActiveKey] = useState('1'); // Initial active tab is Tab 1
 
 
@@ -71,7 +72,8 @@ export default function Enrollment() {
         setCharges(eventData.data.attributes.charges);
         setBasePrice(eventData.data.attributes.price) ;
         setTerms(eventData.data.attributes.terms) ;
-        console.log( "base price set to " + basePrice) ; 
+        setStatus( eventData.data.attributes.status) ; 
+        console.log( "event statatus is  " + eventStatus) ; 
         //console.log( "base price set to " + basePrice) ; 
 
         console.log ( "terms=" ); 
@@ -105,7 +107,11 @@ export default function Enrollment() {
     return <div>Loading...</div>; // Display a loading indicator until basePrice is set
   }
 
- 
+ if ( eventStatus!= 'Active') {
+  return <div> <center>This event is not accepting registrations , anymore. </center></div>
+ }
+
+
   const handleAccordionSelect = (selectedKey) => {
     setActiveKey(selectedKey);
   };
