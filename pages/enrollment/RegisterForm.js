@@ -7,9 +7,8 @@ import { API_URL } from "../../config";
 import Col from 'react-bootstrap/Col';
 import axios from "axios";
 import { useRouter } from 'next/router';
-
- //const termsLink = "<a href='#' onClick=${handleLinkClick}>Click here for terms and conditions</a>"; 
- 
+import React from "react";
+import DatePicker from "react-datepicker";
 
   
 
@@ -139,6 +138,21 @@ const data = await fetch("/api/sendMail", { method: "POST"  ,
   }
   
 
+  async function getGroups() { 
+    console.log( "calling get groups " ); 
+    const GROUP_NAMES_URL = API_URL+"/api/group-names/?populate=*";
+   // const EVENT_URL = process.env.NEXT_PUBLIC_EVENT_URL + "/"+ event_id  + "?populate=*" ; 
+    //const URL = `http://localhost:1337/api/events/${event_id}?populate=*` ; 
+    console.log ( "group names URL is " + GROUP_NAMES_URL ); 
+    const res =  await fetch ( GROUP_NAMES_URL) ; 
+    //console.log( "response is "+ JSON.stringify(res)) ; 
+    //const res = await fetch ( `https://localhost:1337/api/mentor/${mentorId}?api_key=${process.env.API_KEY}`) ; 
+    const data = await  res.json();
+    console.log("response data is", data);
+
+    return  data ; 
+  }
+
 async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSignature ) {
   console.log ( "calling updateing payment api for reg ") ; 
 
@@ -173,18 +187,11 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   
 }
  
-
-
  async function registerForEvent(event , event_id )  {
-  //console.log( "event has " + event_cat.length + " catoagories") ; 
-  //var event_c = "no catagory" ;
+  console.log( "registering for event-" + event.target.profession.value +'-b-'+  event.target.price.value + '-e-' + event.target.dob.value 
+  +'-g-' + event.target.gst.value + '-p-' + event.target.platform_fees.value)  ; 
 
-  //if ( event_cat.length > 0 ) 
-   // event_c = event.target.form.event_catagory.valuecd   ; 
-  
-  //console.log( "got form data" + JSON.stringify(event) ) ; 
- console.log( "registering for event-" + event_id  +'b'+  event.target.blood_group.value + 'e' + event.target.emergency_contact.value +'c' + event.target.emergency_name.value)  ; 
-
+ 
   const result = await  axios.post(`${API_URL}/api/event-enrollments/`, {
         data  : {  full_name : event.target.fullName.value ,
                  email : event.target.email.value , 
@@ -196,6 +203,14 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
                  emergency_contact_name:  event.target.emergency_name.value ,
                  emergency_contact_number:  event.target.emergency_contact.value , 
                  event_name : event.target.event_name.value ,
+                 group_name : event.target.group_name.value , 
+                 dob : event.target.dob.value , 
+                 profession : event.target.profession.value , 
+                 tshirt_size : event.target.tshirt_size.value , 
+                 gst : event.target.gst.value , 
+                 platform_fees: event.target.platform_fees.value , 
+                 total_price : event.target.price.value ,
+                 accomodation_option : event.target.accomodation_option.value 
 
               } 
 
@@ -204,8 +219,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   .then(response => {
    
     console.log( "enrollment id is  " + response.data.data.id) ; 
-  //setEnrollmentId(response.data.data.id) ; 
-  //console.log( "response in then is ", JSON.stringify(response)); 
+
 
    return ( response.data.data.id)  ; 
 })
@@ -216,9 +230,6 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
 }
 )
   
-  ;
-
-
   console.log( "result is ", result ) ; 
 
   return(result); 
@@ -226,40 +237,84 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
 }
 
 
+  const groups = await getGroups() ; 
+  console.log ( "got running groups as " + JSON.stringify(groups)) ; 
 
-function RegisterForm ({event ,openTab3}) {
+  function RegisterForm ({event ,openTab3}) {
 
-  const [price,setPrice] = useState(event?.data?.attributes?.price) ; 
+  const [basePrice,setPrice] = useState(event?.data?.attributes?.price) ; 
   const [event_name , setEventName] = useState(event?.data?.attributes?.name)
   const [event_id , setEventId ] = useState(event?.data?.attributes?.id ); 
   const [enrollmentId,setEnrollmentId] = useState(0) ; 
   
   const [isInputEnabled, setIsInputEnabled] = useState(true);
-  
-  //const event_id = event?.data?.attributes?.id ; 
+
 
   const [statusMessage , setStatusMessage] = useState(""); 
-  //console.log("got event as " + JSON.stringify(event.data)) ; 
-  //const { push } = useRouter();
- 
 
-  const basePrice = event?.data?.attributes?.price ; 
+  //const groups =    getGroups() ; 
+  console.log( "got groups" + JSON.stringify(groups) ) ; 
+
+  //const basePrice = event?.data?.attributes?.price ; 
   const event_cat = event?.data?.attributes?.event_catagories  ;
   const charges = event?.data?.attributes?.charges ; 
 
-  //console.log( "got event as " + JSON.stringify(event)) ; 
-  //setPrice(basePrice) ;
+  const GST_flag = event?.data?.attributes?.GST_flag ; 
+  const GST_percent = event?.data?.attributes?.GST_percent ; 
+  const GST_source = event?.data?.attributes?.GST_source ; 
 
-  //console.log ( "in register got the basepriceas " + basePrice)   ; 
-  //const event  = getEvent(event_id) ; 
+  const platform_fees_flag = event?.data?.attributes?.platform_fees_flag ; 
+  const platform_fees_percent  = event?.data?.attributes?.platform_fees_percent ; 
+  const platform_fees_source = event?.data?.attributes?.platform_fees_source ;
+  const eventMessage = event?.data?.attributes?.event_message ;
+  const tshirt_flag = event?.data?.attributes?.tshirt_flag  ;
+  const accomodation_flag = event?.data?.attributes?.accomodation_flag ;
+  
+  const tshirt_sizes  =  event?.data?.attributes?.tshirt_sizes ; 
+  const accomodation_options = event?.data?.attributes?.accomodation_options ;
+
+  const dob_flag = event?.data?.attributes?.dob_flag ;
+  const profession_flag = event?.data?.attributes?.profession_flag ; 
+
+  console.log ( "acco options are " , accomodation_options) ; 
+  var tshirt_sizes_arr = [] ; 
+  var accomodation_options_arr = [] ; 
+
+  const [startDate, setStartDate] = useState(new Date());
+
+  //var DatePicker = require("react-bootstrap-date-picker");
+
+
+  if ( tshirt_flag) { 
+    tshirt_sizes_arr = tshirt_sizes.split(',');
+  }
+
+  if ( accomodation_flag) { 
+    accomodation_options_arr = accomodation_options.split(',');
+  }
+
+  console.log("event details are" , JSON.stringify(event)) ; 
+  var totalPrice = basePrice  ; 
+  var GST_charges = 0 ; 
+  var platform_fees  = 0 ; 
+
+
+if ( (GST_flag) && ( GST_source== "End_User")) {
+    GST_charges =  basePrice * GST_percent / 100 ; 
+    totalPrice = parseFloat(totalPrice) + parseFloat(GST_charges) ; 
+
+}
+console.log("GST charges are " , basePrice + "-" + GST_percent + "-"+ GST_charges + "-") ; 
+
+if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){ 
+  platform_fees = basePrice * platform_fees_percent /100 ; 
+  totalPrice = totalPrice + platform_fees ; 
+}
+  
+  
   
   const [validated, setValidated] = useState(false);
-  //setPrice(basePrice) ; 
-  //const eventData =  await getEvent(event_id); 
-  //const eventCat = eventData.data.attributes.event_catagories ; 
-  //console.log ( "event cat are ", JSON.stringify(eventCat)) ; 
   
-  //function calculateCharges(catagories  , charges , event_catagory_selected ) { 
 
     const termsLink = '<a href="#" onClick={handleLinkClick}>Click here for terms and conditions</a>';
 
@@ -268,17 +323,42 @@ function RegisterForm ({event ,openTab3}) {
       openTab3(); // Call the callback function to open Tab 3
     };
     
+    function handleGroupChange(event) { 
+      //console.log("new value is "  , event.target.value) ; 
+      setField('group_name', event.target.value ) ; 
+      //setPrice(calculateCharges(event.target.value , basePrice)); 
+    
+    }
+
+    function setDate(dob) { 
+      setField("dob",dob) ; 
+      console.log("dob is ", dob) ; 
+
+    }
 
     function handleEventCatChange(event) { 
-      //console.log("new value is "  , event.target.value) ; 
+      console.log("new value is "  , event.target.value) ; 
       setField('event_catagory', event.target.value ) ; 
-      setPrice(calculateCharges(event.target.value , basePrice)); 
+      setPrice(calculateCharges(event.target.value)); 
     
     }
   
+    function handleTshirtSizeChange(event) { 
+      console.log("new value is "  , event.target.value) ; 
+      setField('tshirt_size', event.target.value ) ; 
+
+    
+    }
+    function handleAccomodationChange(event) { 
+      console.log("new value is "  , event.target.value) ; 
+      setField("accomodation_option", event.target.value ) ; 
+
+    
+    }
+
   function calculateCharges( event_catagory_selected  ,basePrice) {   
     
-    //console.log( "looking for" + event_catagory_selected + "in " + JSON.stringify(event_cat) + "base price is " + basePrice) ; 
+    console.log( "looking for" + event_catagory_selected + "in " + JSON.stringify(event_cat) + "base price is " + basePrice) ; 
   
     for (var i = 0; i < event_cat.length; i++) {
       if (event_cat[i].event_catagory == event_catagory_selected ) {
@@ -411,7 +491,7 @@ function RegisterForm ({event ,openTab3}) {
   }
 
   const findFormErrors = () => {
-    const { email , mobile, fullName , gender , blood_group, event_catagory , emergency_name, emergency_contact  } = form
+    const { email , mobile, fullName , gender , blood_group, event_catagory , emergency_name, emergency_contact  ,dob , accomodation_option, tshirt_size } = form
     const newErrors = {}
     // name errors
     if ( !fullName || fullName === '' ) newErrors.fullName = 'full name cannot be blank!'
@@ -442,6 +522,21 @@ function RegisterForm ({event ,openTab3}) {
     if ( mobile == emergency_contact) {
       newErrors.emergency_contact = 'applicant mobile and emergency contact mobile cant be same' ; 
     }
+
+    if ( tshirt_flag && ( tshirt_size ==='' || !tshirt_size  )) {
+
+      newErrors.tshirt_size = 'Need to select T Shirt Size' ; 
+    }
+    if ( accomodation_flag && ( accomodation_option ==='' || !accomodation_option  )) {
+
+      newErrors.accomodation_option = 'Need to select room type ' ; 
+    }
+
+    console.log( "dob is " + dob ) ; 
+    if ( dob_flag && ( dob ==='dd/mm/yyyy' || !dob  )) {
+
+      newErrors.dob = 'Need to select Date of Birth' ; 
+    }
     /*
     console.log ( "value of agree-" + isChecked +"-" ) ;
     if ( agree == false ) { 
@@ -456,115 +551,7 @@ function RegisterForm ({event ,openTab3}) {
   }
   
 
-  const handleSubmit2 =  async (data) => {
-      //console.log ( "Got in validation ") ; 
-
-      const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-      const isValidEmail = emailRegex.test(data.target.email.value);
-
-      if ( !isValidEmail) {
-        data.preventDefault();
-        data.stopPropagation();
-        setStatusMessage( "Email is not correct . " ) ; 
-        setValidated(true); 
-        return ; 
-
-      }
-      
-      if  ( !checked ) 
-      {
-        data.preventDefault();
-        data.stopPropagation();
-        setStatusMessage( "Please agree on terms and conditions before proceeding" ) ; 
-        setValidated(true); 
-        return ; 
-      }
-  
-      if ( data.target.emergency_contact.value == data.target.mobile.value) {
-        setStatusMessage ( "Your mobile and emergency contact number cant be same "); 
-        data.preventDefault();
-        data.stopPropagation();
-        console.log( "some validation issues  ")
-        setValidated(true); 
-        return ; 
-
-      }
-      if ( data.target.fullName.value == data.target.emergency_name.value) {
-        setStatusMessage ( "Your name  and emergency contact name cant be same "); 
-        data.preventDefault();
-        data.stopPropagation();
-        console.log( "some validation issues  ")
-        setValidated(true); 
-        return ; 
-
-      }
-      if ( isNaN(data.target.mobile.value) ||  ( data.target.mobile.value.length !=10 )) {
-        setStatusMessage ( "Your mobile must be numeric and of 10 digits "); 
-        data.preventDefault();
-        data.stopPropagation();
-        console.log( "some validation issues  ")
-        setValidated(true); 
-        return ; 
-
-      }
-      if ( isNaN(data.target.emergency_contact.value) || ( data.target.emergency_contact.value.length !=10 )) {
-        setStatusMessage ( "Emergency Contact number must be numeric and of 10 digits "); 
-        data.preventDefault();
-        data.stopPropagation();
-        console.log( "some validation issues  ")
-        setValidated(true); 
-        return ; 
-
-      }
-
-      const form = data.currentTarget;
-      if (form.checkValidity() === false) {
-        data.preventDefault();
-        data.stopPropagation();
-        setStatusMessage ( "All fields are mandatory"); 
-
-        console.log( "some validation issues  ")
-        setValidated(true); 
-        return ; 
-      }
-  
-      try { 
-          console.log ( "going to call azios api now "); 
-          data.preventDefault();
-        data.stopPropagation();
-         
-          const id =  await registerForEvent(data , event_id )  ; 
-          setEnrollmentId(id) ;  
-  
-          console.log ( "done registration successfully" + id ) ; 
-          
-          setPrice(calculateCharges(data.target.event_catagory.value,basePrice)) ;
-  
-          setIsInputEnabled(false) ; 
-          //setPrice(price) ;
-  
-          //console.log( "price for the event" , price );
-
-          if ( price > 0 )
-            { setStatusMessage("Data saved , complete the payment ") ;
-           // sendMail(event_name , data.target.enrollmentId.value , data.target.fullName.value  ,data.target.event_catagory.value , data.target.email.value , "Welcome" ) ; 
-          }  
-          else 
-            setStatusMessage("Your registration is successful.") ; 
-          
-            return ;
-
-   
-      } catch (error ){ 
-          console.error(error) ; 
-      }
-      
-   
-  
-  
-    
-  
-    };
+ 
   
   return (
 
@@ -614,8 +601,26 @@ function RegisterForm ({event ,openTab3}) {
           /> 
         <Form.Control.Feedback type='invalid'>{ errors.fullName}</Form.Control.Feedback>
         </FloatingLabel>
-  
+
+        { dob_flag &&  
+        <FloatingLabel label="Date of Birth"  className="mb-3">
+        <Form.Control
+                type="date"
+                id="dob"
+                name="dob"
+                placeholder="Date of birth "
+                required 
+                isInvalid={ !!errors.dob }
+                onChange={(e) => setDate(e.target.value)}
+              />
+               <Form.Control.Feedback type='invalid'>{ errors.dob}</Form.Control.Feedback>
+        </FloatingLabel>
+  } 
+    
+
         
+
+      
   
         <FloatingLabel label="Select Gender" className="mb-3">
         <Form.Select id="gender" aria-label="Gender" required disabled={!isInputEnabled}
@@ -623,7 +628,7 @@ function RegisterForm ({event ,openTab3}) {
          onChange={ e => setField('gender', e.target.value) }
          isInvalid={ !!errors.gender }
         >
-          <Form.Control.Feedback type='invalid'>{ errors.gender }</Form.Control.Feedback>
+         
           <option></option>
           
           <option value="Male">Male</option>
@@ -631,6 +636,7 @@ function RegisterForm ({event ,openTab3}) {
           <option value="Others">Others</option>
          
         </Form.Select>
+        <Form.Control.Feedback type='invalid'>{ errors.gender }</Form.Control.Feedback>
       </FloatingLabel>
   
       <FloatingLabel label="Select Blood Group" className="mb-3">
@@ -657,7 +663,7 @@ function RegisterForm ({event ,openTab3}) {
   
       {event_cat &&   (
       <FloatingLabel label="Select Event Catagory" className="mb-3" required >
-        <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={  handleEventCatChange} required disabled={!isInputEnabled || event_cat.length==0 }
+        <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleEventCatChange} required disabled={!isInputEnabled || event_cat.length==0 }
           as='select' 
           isInvalid={ !!errors.event_catagory}
         >
@@ -670,6 +676,23 @@ function RegisterForm ({event ,openTab3}) {
         <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
       </FloatingLabel>
       )} 
+      
+  {groups &&   (
+      <FloatingLabel label="Select your Fitness Group" className="mb-3" required >
+        <Form.Select id="group_name" aria-label="Select Group Name" onChange={  handleGroupChange} 
+          as='select' 
+        >
+  
+        <option></option>
+        {groups && 
+          groups.data.map(d => (<option value={d.attributes.group_name}>{d.attributes.group_name}</option>))} 
+  
+        </Form.Select>
+       
+      </FloatingLabel>
+      )} 
+
+
       <FloatingLabel
           label="Emergency Contact Name"
           className="mb-3"
@@ -692,6 +715,49 @@ function RegisterForm ({event ,openTab3}) {
           <Form.Control.Feedback type='invalid'>{ errors.emergency_contact}</Form.Control.Feedback>
         </FloatingLabel>
 
+        {tshirt_flag &&   (
+      <FloatingLabel label="Select Tshirt Size" className="mb-3" required >
+        <Form.Select id="tshirt_size" aria-label="Select Size" onChange={  handleTshirtSizeChange} required disabled={!isInputEnabled}
+          as='select' 
+          isInvalid={ !!errors.tshirt_size}
+        >
+           <Form.Control.Feedback type='invalid'>{ errors.tshisrt_size}</Form.Control.Feedback>
+        <option></option>
+
+        {tshirt_sizes_arr && 
+          tshirt_sizes_arr.map(d => (<option value={d}>{d}</option>))} 
+  
+        </Form.Select>
+        <Form.Control.Feedback type='invalid'>{ errors.tshirt_size}</Form.Control.Feedback>
+      </FloatingLabel>
+      )} 
+
+{accomodation_flag &&   (
+      <FloatingLabel label="Select Room Type" className="mb-3" required >
+        <Form.Select id="accomodation_option" aria-label="Select Room" onChange={  handleAccomodationChange} required disabled={!isInputEnabled}
+          as='select' 
+          isInvalid={ !!errors.accomodation_option}
+        >
+           <Form.Control.Feedback type='invalid'>{ errors.accomodation_option}</Form.Control.Feedback>
+        <option></option>
+
+        {accomodation_options_arr && 
+          accomodation_options_arr.map(d => (<option value={d}>{d}</option>))} 
+  
+        </Form.Select>
+        <Form.Control.Feedback type='invalid'>{ errors.accomodation_option}</Form.Control.Feedback>
+      </FloatingLabel>
+      )} 
+
+        { profession_flag && 
+        <FloatingLabel label="Profession"  className="mb-3">
+          <Form.Control type="input" id="profession" placeholder="Enter your profession"   disabled={!isInputEnabled}
+          onChange={ e => setField('profession', e.target.value) }
+        /> 
+  
+        </FloatingLabel>
+        } 
+
       <Form.Group>  
                       <FloatingLabel
                         label="Enrollment Id"
@@ -701,13 +767,43 @@ function RegisterForm ({event ,openTab3}) {
                       </FloatingLabel>
                       
                       </Form.Group>
-  
+                      {   GST_flag && 
+        
+        <Form.Group>  
+        <FloatingLabel
+          label="GST"
+          className="mb-3"
+        >
+        <Form.Control type="input" id="gst" value={GST_charges} disabled/>
+        </FloatingLabel>
+        
+        </Form.Group>
+
+                      }
+
+{   platform_fees_flag && 
+        
+        <Form.Group>  
+        <FloatingLabel
+          label="Platform Fees"
+          className="mb-3"
+        >
+        <Form.Control type="input" id="platform_fees" value={platform_fees} disabled/>
+        </FloatingLabel>
+        
+        </Form.Group>
+
+                      }
+
       <Form.Group>  
+      
+
+
                       <FloatingLabel
                         label="Event Price"
                         className="mb-3"
                       >
-                      <Form.Control type="input" id="price" value={price} disabled/>
+                      <Form.Control type="input" id="price" value={totalPrice} disabled/>
                       </FloatingLabel>
                       
                       </Form.Group>
@@ -736,7 +832,8 @@ function RegisterForm ({event ,openTab3}) {
           
         </div>
  
-  
+      <div> {eventMessage} </div>
+
         <div style={{ color: 'red' }}> <p> {statusMessage}</p> </div>
   
       <Button type="submit"  disabled={!isInputEnabled} >Register</Button>{' '}

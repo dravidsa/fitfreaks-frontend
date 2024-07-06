@@ -38,7 +38,7 @@ export default function Home({ events, blogs, groups  , coaches}) {
        console.log ( "username is ", username ) ;  */ 
 
   }, []);
-  
+  console.log( "username in index,js " + username) ; 
  
   
   return (

@@ -11,6 +11,15 @@ let message = "           Welcome guest" ;
 
 const Header = ({username}) => {
 
+  //const usr = "Guest" ; 
+  var userMessage = ""; 
+  if ( username == "" ) { 
+   userMessage = "Wecome Guest" ;
+  } 
+  else  userMessage = "Welcome " + username ; 
+
+
+
   const [isLogged, setIsLogged] = useState();
 
   useEffect(() => {
@@ -97,6 +106,9 @@ const Header = ({username}) => {
                                 Logout
                             </Link>
                         )}
+                    </li>
+                    <li className="nav-item">
+                      {userMessage}
                     </li>
             
               
