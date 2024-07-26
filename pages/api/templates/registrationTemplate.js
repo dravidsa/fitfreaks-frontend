@@ -41,7 +41,7 @@ export default function  RegistrationTemplate({name , event_catagory , enrollmen
           Yours truely,
           </p> 
           <p>
-          Team KDR 
+          Team {event_name}
         </p>
         </Col>
       </Row>

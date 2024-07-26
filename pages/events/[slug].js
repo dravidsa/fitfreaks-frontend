@@ -19,7 +19,8 @@ const EventSinglePage = ({events, slug}) => {
   console.log(JSON.stringify(event_catagories)) ; 
  
   ///const enrollment_url = "/enrollment?event_id=" + event[0].id + "&event_name="+name+""; 
-  const enrollment_url = "/enrollment?event_id=" + event[0].id ; 
+  //const enrollment_url = "/enrollment?event_id=" + event[0].id ; 
+  const enrollment_url = "/events/catagoryList?event_id=" + event[0].id ; 
 
   console.log ( "event URL is " + enrollment_url ) ; 
 

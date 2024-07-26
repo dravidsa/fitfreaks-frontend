@@ -19,25 +19,12 @@ import Form from 'react-bootstrap/Form';
 async function getEvent(event_id) { 
   console.log( "calling get event for event_id " + event_id  ); 
   const EVENT_URL = API_URL+"/api/events/"+event_id+"?populate=*";
-
  // const EVENT_URL = process.env.NEXT_PUBLIC_EVENT_URL + "/"+ event_id  + "?populate=*" ; 
   //const URL = `http://localhost:1337/api/events/${event_id}?populate=*` ; 
   console.log ( "new event URL is " + EVENT_URL ); 
-  try { 
   const res =  await fetch ( EVENT_URL) ; 
-  if (!res.ok) {
-    console.log( "call failed") ; 
-    return "ERROR" ; 
-  } 
   //const res = await fetch ( `https://localhost:1337/api/mentor/${mentorId}?api_key=${process.env.API_KEY}`) ; 
-  console.log("call was success") ; 
-
-  return  await res.json() ;
-  }
-  catch (error ){
-    console.log( " Error is " + error ) ; 
-    return "ERROR" ;  
-  }  
+  return  await res.json() ; 
 }
 
 
@@ -49,16 +36,14 @@ export default function Enrollment() {
   const [event, setEvent] = useState(null);
   const [location_address, setLocationAddress] = useState(null);
   const [location_GPS, setLocationGPS] = useState(null);
- const [numCat, setNumCat] = useState(null); // Using useState for numCat
-  const [eventCat,setEventCat] = useState()  ; 
+  const [numCat, setNumCat] = useState(null); // Using useState for numCat
+  const [eventCat,setEventCat] = useState() ; 
   const [charges,setCharges] = useState() ; 
   const [attendeeCat,setAttendeeCat] = useState() ; 
   const [basePrice , setBasePrice] = useState(-1) ; 
   const [terms, setTerms] = useState(""); 
   const [eventStatus, setStatus] = useState(""); 
   const [activeKey, setActiveKey] = useState('1'); // Initial active tab is Tab 1
-  const [errorFlag , setErrorFlag] = useState(false) ; 
-  const [selectedEventCat, setSelectedEventCat] = useState() ; 
 
 
   
@@ -67,24 +52,12 @@ export default function Enrollment() {
 
   useEffect(() => {
     const eventId = searchParams.get("event_id");
-    const event_cat  = searchParams.get("event_catagory")
     //const eventName = searchParams.get("event_name");
-    console.log("event cat is ", event_cat) ; 
-
     setEventId(eventId);
-    setSelectedEventCat(event_cat) ; 
-
    // setEventName(eventName);
 
     if (eventId) {
       getEvent(eventId).then((eventData) => {
-        console.log( "event data is " + JSON.stringify(eventData)) ; 
-        if (eventData == "ERROR") {
-          console.log( "Error in fetching event data maybe an invalid event") ; 
-          setErrorFlag(true )  ; 
-          return "<div>Error in loading event datails , maybe an invalid event...</div>" ; // or any loading indicator
-         
-        }
 
         setEvent(eventData);
         setEventName(eventData.data.attributes.name);
@@ -109,9 +82,7 @@ export default function Enrollment() {
       });
     }
   }, [searchParams]);
-  console.log("error flag is ", errorFlag) ;
 
-  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -120,16 +91,10 @@ export default function Enrollment() {
     }
   }, [basePrice]);
 
-  if (errorFlag) {
-    console.log("error detected") ; 
-    return <div>Error in Fetching event details or wrong event id . </div>; // or any loading indicator
-  }
-
   console.log( "base price set to " + basePrice) ; 
   if (!event_id ) {
     return <div>Loading...</div>; // or any loading indicator
   }
-
 
   console.log("Event ID from query:", event_id , "attendee cat are " , numCat);
  
@@ -147,18 +112,74 @@ export default function Enrollment() {
  }
 
 
+  const handleAccordionSelect = (selectedKey) => {
+    setActiveKey(selectedKey);
+  };
+
+  const openTab3 = () => {
+    setActiveKey('2'); // Open Tab 3
+  };
 
 
   return (
 
     <Layout title= "Event Enrollment">
     <div>
-                   
-                  <RegisterForm event={event} selectedEventCat={selectedEventCat} />
-               
-        </div>
-  
+        <div className="faq section-padding">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-8 col-lg-6 mx-auto">
+              <SectionTitle title="Event Registration" />
+              <Accordion
+                className="accordion-flush faq-accordion"
+                defaultActiveKey="0"
+                activeKey={activeKey} onSelect={handleAccordionSelect}
+              >
+                <Accordion.Item eventKey="0" style={{ backgroundImage: `url('./kothrud_lsom.jpeg')`, backgroundSize: 'cover', backgroundPosition: 'right center', backgroundRepeat: 'no-repeat' }}>
+                  <Accordion.Header>
+                    {" "}
+                    <span>Event Details</span> <IoIosArrowDown />{" "}
+                  </Accordion.Header>
+                  <Accordion.Body>
       
+
+                  <h2> Registering for Event : {event_name} </h2> 
+                  <h4> Address : { location_address } </h4>
+                  <h4> <a href={ location_GPS}>Click here for GPS Location</a>  </h4>
+                  {numCat > 1  ? (
+                        <div className="popular">
+                          <Attendee_Catagories attendee_catagories={attendeeCat}/> 
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                  </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    {" "}
+                    <span>Attendee Details</span> <IoIosArrowDown />
+                  </Accordion.Header>
+                  <Accordion.Body>
+                  <RegisterForm event={event} openTab3={openTab3} />
+                  </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="2">
+                  <Accordion.Header>
+                    {" "}
+                    <span>Terms and Conditions</span> <IoIosArrowDown />
+                  </Accordion.Header>
+                    <Accordion.Body>
+                    <div dangerouslySetInnerHTML={{ __html: terms }} />
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
     </Layout> 
 
   )
