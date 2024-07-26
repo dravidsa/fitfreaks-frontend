@@ -2,13 +2,18 @@
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { useState } from "react" ;
+import { useState , useRef } from "react" ;
 import { API_URL } from "../../config";
 import Col from 'react-bootstrap/Col';
 import axios from "axios";
 import { useRouter } from 'next/router';
 import React from "react";
 import DatePicker from "react-datepicker";
+//import '../../styles/customStyles.css';  
+import ShowTerms from './showTerms';
+
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 
   
 
@@ -187,11 +192,33 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   
 }
  
- async function registerForEvent(event , event_id )  {
-  console.log( "registering for event-" + event.target.profession.value +'-b-'+  event.target.price.value + '-e-' + event.target.dob.value 
-  +'-g-' + event.target.gst.value + '-p-' + event.target.platform_fees.value)  ; 
+ async function registerForEvent(event , event_id ,fileUrl, GST_flag, profession_flag , tshirt_flag,platform_fees_flag,accomodation_flag,dob_flag)  {
+  //console.log( "registering for event-" + event.target.profession.value +'-b-'+  event.target.price.value + '-e-' + event.target.dob.value +'-g-' + event.target.gst.value + '-p-' + event.target.platform_fees.value)  ; 
 
- 
+  console.log ( "flags are " , GST_flag , accomodation_flag , profession_flag ); 
+  
+  var gst  , tshirt_size , accomodation_option , platform_fees , dob , profession  ;
+  
+
+  if ( GST_flag){
+    gst= event.target.gst.value  ; 
+  }
+  if ( profession_flag){
+    profession = event.target.profession.value  ; 
+  }
+  if ( dob_flag){
+    dob = event.target.dob.value  ; 
+  }
+  if ( tshirt_flag){
+    tshirt_size= event.target.tshirt_size.value  ; 
+  }
+  if ( accomodation_flag){
+    accomodation_option = event.target.accomodation_option.value  ; 
+  }
+  if ( platform_fees_flag){
+    platform_fees = event.target.platform_fees.value  ; 
+  }
+
   const result = await  axios.post(`${API_URL}/api/event-enrollments/`, {
         data  : {  full_name : event.target.fullName.value ,
                  email : event.target.email.value , 
@@ -203,14 +230,17 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
                  emergency_contact_name:  event.target.emergency_name.value ,
                  emergency_contact_number:  event.target.emergency_contact.value , 
                  event_name : event.target.event_name.value ,
-                 group_name : event.target.group_name.value , 
-                 dob : event.target.dob.value , 
-                 profession : event.target.profession.value , 
-                 tshirt_size : event.target.tshirt_size.value , 
-                 gst : event.target.gst.value , 
-                 platform_fees: event.target.platform_fees.value , 
+                 group_name : event.target.group_name.value ,   
                  total_price : event.target.price.value ,
-                 accomodation_option : event.target.accomodation_option.value 
+                 document_url : fileUrl ,
+                 dob : dob , 
+                 profession : profession , 
+                 tshirt_size : tshirt_size , 
+                 gst : gst, 
+                 platform_fees:platform_fees, 
+                 total_price : event.target.price.value ,
+                 accomodation_option : accomodation_option
+          
 
               } 
 
@@ -240,12 +270,18 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   const groups = await getGroups() ; 
   console.log ( "got running groups as " + JSON.stringify(groups)) ; 
 
-  function RegisterForm ({event ,openTab3}) {
+  function RegisterForm ({event ,selectedEventCat}) {
 
   const [basePrice,setPrice] = useState(event?.data?.attributes?.price) ; 
   const [event_name , setEventName] = useState(event?.data?.attributes?.name)
   const [event_id , setEventId ] = useState(event?.data?.attributes?.id ); 
   const [enrollmentId,setEnrollmentId] = useState(0) ; 
+  const [fileName,setFileName] =useState("select File to Upload") ; 
+  const [file, setFile] = useState("");
+  //const [termsText, setTermsText] = useState() ; 
+  
+
+  console.log( "event catagory selected was" + selectedEventCat) ; 
   
   const [isInputEnabled, setIsInputEnabled] = useState(true);
 
@@ -275,6 +311,13 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
 
   const dob_flag = event?.data?.attributes?.dob_flag ;
   const profession_flag = event?.data?.attributes?.profession_flag ; 
+  const document_flag = event?.data?.attributes?.document_flag ; 
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const termsText = event?.data?.attributes?.terms; 
+  
+
+
 
   console.log ( "acco options are " , accomodation_options) ; 
   var tshirt_sizes_arr = [] ; 
@@ -312,6 +355,35 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
 }
   
   
+const hiddenFileInput = useRef(null);
+//setFileName("File not yet selected")
+
+  const handleChange = event => {
+
+    if (event.target.files && event.target.files[0]) {
+      console.log("files are " + JSON.stringify(event.target.files)) ; 
+      const i = event.target.files[0];
+      const tmpfileName = event.target.files[0]; 
+      console.log  ("got file name as " + JSON.stringify(tmpfileName)) ; 
+      setFileName(tmpfileName) ;
+      const body = new FormData();
+      body.append("image", i);
+
+
+    }
+  };
+
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    setFileName(selectedFile.name);
+  };
+
+  const handleClick = event => {
+    hiddenFileInput.current.click();
+  };
+
   
   const [validated, setValidated] = useState(false);
   
@@ -319,9 +391,34 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
     const termsLink = '<a href="#" onClick={handleLinkClick}>Click here for terms and conditions</a>';
 
     const handleLinkClick = () => {
+
+      setIsModalOpen(true)
+      /*
       // Simulate clicking a URL
-      openTab3(); // Call the callback function to open Tab 3
+      const termsText = " Some sample terms Text " ; 
+
+      const rootElement = document.getElementById("root");
+      const root = createRoot(rootElement);
+      if (rootElement) { 
+      root.render(
+      <StrictMode>
+        <ShowTerms termsText={termsText} />
+      </StrictMode>
+);  
+}
+  else {
+    console.log( "Root not found ") ; 
+  }
+
+      */
+
+
     };
+
+    const handleCloseModal = () => {
+      setIsModalOpen(false)
+   }
+
     
     function handleGroupChange(event) { 
       //console.log("new value is "  , event.target.value) ; 
@@ -452,11 +549,34 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
         //alert('Thank you for your feedback!') ;
         
         try { 
-
+          var fileUrl ; 
           data.preventDefault();
           data.stopPropagation();
+          console.log("uploading file" + file) ; 
+          if (file) {
+            console.log( "uploading file on servdr" + JSON.stringify(file)) ; 
+            const formData = new FormData();
+            formData.append('files', file );
+      
+            // Replace with your actual API endpoint for file upload
+            const response = await fetch(`${API_URL}/api/upload`, {
+              method: 'POST',
+              body: formData,
+            });
+      
+            if (response.ok) {
+              const data = await response.json();
+              console.log ( "file upload response " + JSON.stringify(data)) ; 
+              fileUrl = data[0].url ; 
 
-          const id =  await registerForEvent(data , event_id )  ; 
+              console.log('File uploaded successfully .Url is ',fileUrl);
+            } else {
+              console.error('File upload failed');
+            }
+          }
+        
+
+          const id =  await registerForEvent(data , event_id , fileUrl,GST_flag, profession_flag , tshirt_flag,platform_fees_flag,accomodation_flag,dob_flag)  ; 
           if ( id ==0) {
             setStatusMessage("Some error in saving the record, please retry") ;
             return ; 
@@ -465,14 +585,14 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
   
           console.log ( "done registration successfully" + id ) ; 
           
-          setPrice(calculateCharges(data?.target?.event_catagory?.value,basePrice)) ;
+          //setPrice(calculateCharges(data?.target?.event_catagory?.value,basePrice)) ;
   
           setIsInputEnabled(false) ; 
           //setPrice(price) ;
   
-          //console.log( "price for the event" , price );
+          console.log( "price for the event" , price );
 
-          if ( price > 0 )
+          if ( totalPrice > 0 )
             { setStatusMessage("Data saved , complete the payment ") ;
            // sendMail(event_name , data.target.enrollmentId.value , data.target.fullName.value  ,data.target.event_catagory.value , data.target.email.value , "Welcome" ) ; 
           }  
@@ -491,7 +611,7 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
   }
 
   const findFormErrors = () => {
-    const { email , mobile, fullName , gender , blood_group, event_catagory , emergency_name, emergency_contact  ,dob , accomodation_option, tshirt_size } = form
+    const { email , mobile, fullName , gender , blood_group, event_catagory , emergency_name, emergency_contact  ,dob , accomodation_option, tshirt_size, fileUpload } = form
     const newErrors = {}
     // name errors
     if ( !fullName || fullName === '' ) newErrors.fullName = 'full name cannot be blank!'
@@ -537,6 +657,11 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
 
       newErrors.dob = 'Need to select Date of Birth' ; 
     }
+    console.log("fileUpload is ", file) ; 
+
+    if ( document_flag && ( file === '')){
+      newErrors.fileUpload ="select a document for ID proof to upload. "
+    }
     /*
     console.log ( "value of agree-" + isChecked +"-" ) ;
     if ( agree == false ) { 
@@ -555,14 +680,15 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
   
   return (
 
-<div className='App d-flex flex-column align-items-center'>
+<div id="root">
 
   
-<Form style={{ width: "max-width" }}  noValidate validated={validated} onSubmit={handleSubmit} >
+<Form 
+className="custom-form"
+noValidate validated={validated} onSubmit={handleSubmit} >
         <Form.Group>  
                       <FloatingLabel
                         label="Event Name"
-                        className="mb-3"
                       >
                       <Form.Control type="input" id="event_name" value={event_name} disabled/>
                       </FloatingLabel>
@@ -575,6 +701,7 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
           className="mb-3"
         >
           <Form.Control type="email" id="email" placeholder="name@example.com" 
+          className="custom-input"
           onChange={ e => setField('email', e.target.value) }
           isInvalid={ !!errors.email }
           required disabled={!isInputEnabled}/>
@@ -584,9 +711,10 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
     
         <FloatingLabel
           label="Mobile "
-          className="mb-3"
+           className="mb-3"
         >
           <Form.Control type="number" id = "mobile" placeholder="enter your Mobile Number" required disabled={!isInputEnabled}
+            className="custom-input"
             onChange={ e => setField('mobile', e.target.value) }
             isInvalid={ !!errors.mobile }
           />
@@ -594,8 +722,9 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
         </FloatingLabel>
   
   
-        <FloatingLabel label="Full Name"  className="mb-3">
+        <FloatingLabel label="Full Name"   className="mb-3">
           <Form.Control type="input" id="fullName" placeholder="Enter your full name"  required disabled={!isInputEnabled}
+          className="custom-input"
           onChange={ e => setField('fullName', e.target.value) }
           isInvalid={ !!errors.fullName }
           /> 
@@ -603,9 +732,10 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
         </FloatingLabel>
 
         { dob_flag &&  
-        <FloatingLabel label="Date of Birth"  className="mb-3">
+        <FloatingLabel label="Date of Birth"   className="mb-3">
         <Form.Control
                 type="date"
+                className="custom-input"
                 id="dob"
                 name="dob"
                 placeholder="Date of birth "
@@ -622,9 +752,10 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
 
       
   
-        <FloatingLabel label="Select Gender" className="mb-3">
+        <FloatingLabel label="Select Gender"  className="mb-3">
         <Form.Select id="gender" aria-label="Gender" required disabled={!isInputEnabled}
          as='select' 
+         className="custom-input"
          onChange={ e => setField('gender', e.target.value) }
          isInvalid={ !!errors.gender }
         >
@@ -639,9 +770,10 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
         <Form.Control.Feedback type='invalid'>{ errors.gender }</Form.Control.Feedback>
       </FloatingLabel>
   
-      <FloatingLabel label="Select Blood Group" className="mb-3">
+      <FloatingLabel label="Select Blood Group"  className="mb-3">
         <Form.Select id="blood_group" aria-label="blood_group" required disabled={!isInputEnabled}
          as='select' 
+         className="custom-input"
          onChange={ e => setField('blood_group', e.target.value) }
          isInvalid={ !!errors.blood_group }
         >
@@ -660,17 +792,36 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
         <Form.Control.Feedback type='invalid'>{ errors.blood_group }</Form.Control.Feedback>
       </FloatingLabel>
 
-  
-      {event_cat &&   (
-      <FloatingLabel label="Select Event Catagory" className="mb-3" required >
+      { selectedEventCat && (
+        <FloatingLabel label="Select Event Catagory"  className="mb-3" >
         <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleEventCatChange} required disabled={!isInputEnabled || event_cat.length==0 }
           as='select' 
+          className="custom-input"
+          isInvalid={ !!errors.event_catagory}
+        >
+           <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
+        <option></option>
+          <option value={selectedEventCat} selected>{selectedEventCat}</option>
+  
+        </Form.Select>
+        <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
+      </FloatingLabel>
+      )
+    }
+
+
+      
+      {event_cat && !selectedEventCat &&   (
+      <FloatingLabel label="Select Event Catagory"  className="mb-3" >
+        <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleEventCatChange} required disabled={!isInputEnabled || event_cat.length==0 }
+          as='select' 
+          className="custom-input"
           isInvalid={ !!errors.event_catagory}
         >
            <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
         <option></option>
         {event_cat && 
-          event_cat.map(d => (<option value={d.event_catagory}>{d.event_catagory_desc}</option>))} 
+          event_cat.map(d => (<option value={d.event_catagory}>{d.event_catagory}</option>))} 
   
         </Form.Select>
         <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
@@ -678,9 +829,10 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
       )} 
       
   {groups &&   (
-      <FloatingLabel label="Select your Fitness Group" className="mb-3" required >
+      <FloatingLabel label="Select your Fitness Group" className="mb-3" >
         <Form.Select id="group_name" aria-label="Select Group Name" onChange={  handleGroupChange} 
           as='select' 
+          className="custom-input"
         >
   
         <option></option>
@@ -695,30 +847,33 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
 
       <FloatingLabel
           label="Emergency Contact Name"
-          className="mb-3"
+           className="mb-3"
         >
           <Form.Control type="input" id="emergency_name" placeholder="enter emergency contact name" required disabled={!isInputEnabled} 
                onChange={ e => setField('emergency_name', e.target.value) }
                isInvalid={ !!errors.emergency_name }
+               className="custom-input"
           />
           <Form.Control.Feedback type='invalid'>{ errors.emergency_name}</Form.Control.Feedback>
         </FloatingLabel>
 
         <FloatingLabel
           label="Emergency Contact Number"
-          className="mb-3"
+           className="mb-3"
         >
           <Form.Control type="number" id="emergency_contact" placeholder="enter your emergency contact number" required disabled={!isInputEnabled} 
                onChange={ e => setField('emergency_contact', e.target.value) }
+               className="custom-input"
                isInvalid={ !!errors.emergency_contact }
           />
           <Form.Control.Feedback type='invalid'>{ errors.emergency_contact}</Form.Control.Feedback>
         </FloatingLabel>
 
         {tshirt_flag &&   (
-      <FloatingLabel label="Select Tshirt Size" className="mb-3" required >
+      <FloatingLabel label="Select Tshirt Size"  className="mb-3">
         <Form.Select id="tshirt_size" aria-label="Select Size" onChange={  handleTshirtSizeChange} required disabled={!isInputEnabled}
           as='select' 
+          className="custom-input"
           isInvalid={ !!errors.tshirt_size}
         >
            <Form.Control.Feedback type='invalid'>{ errors.tshisrt_size}</Form.Control.Feedback>
@@ -733,9 +888,10 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
       )} 
 
 {accomodation_flag &&   (
-      <FloatingLabel label="Select Room Type" className="mb-3" required >
+      <FloatingLabel label="Select Room Type"  className="mb-3">
         <Form.Select id="accomodation_option" aria-label="Select Room" onChange={  handleAccomodationChange} required disabled={!isInputEnabled}
           as='select' 
+          className="custom-input"
           isInvalid={ !!errors.accomodation_option}
         >
            <Form.Control.Feedback type='invalid'>{ errors.accomodation_option}</Form.Control.Feedback>
@@ -751,22 +907,59 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
 
         { profession_flag && 
         <FloatingLabel label="Profession"  className="mb-3">
-          <Form.Control type="input" id="profession" placeholder="Enter your profession"   disabled={!isInputEnabled}
+          
+          <Form.Control type="input" id="profession" placeholder="Enter your profession"  
+          className="custom-input"
+           disabled={!isInputEnabled}
           onChange={ e => setField('profession', e.target.value) }
         /> 
   
         </FloatingLabel>
         } 
 
+{/* File Upload Field */}
+{   document_flag && 
+<Form.Group controlId="fileUpload" className="mb-3">
+
+  
+          <Form.Label>Upload File for ID proof (Image or PDF)</Form.Label>
+          <Form.Control
+            type="file"
+            accept=".jpg,.jpeg,.png,.pdf"
+            onChange={handleFileChange}
+            className="custom-input"
+            isInvalid={ !!errors.fileUpload }
+            required disabled={!isInputEnabled}/>
+            <Form.Control.Feedback type='invalid'>{ errors.fileUpload }</Form.Control.Feedback>
+  
+        </Form.Group>
+  }
+      
+
       <Form.Group>  
                       <FloatingLabel
                         label="Enrollment Id"
                         className="mb-3"
                       >
-                      <Form.Control type="input" id="enrollmentId" value={enrollmentId} disabled/>
+                      <Form.Control type="input" id="enrollmentId" 
+                      className="custom-input"
+                      value={enrollmentId} disabled/>
                       </FloatingLabel>
                       
                       </Form.Group>
+
+                      <Form.Group>  
+        <FloatingLabel
+          label="Base Price"
+          className="mb-3"
+        >
+        <Form.Control type="input" id="basePrice" 
+        className="custom-input"
+        value={basePrice} disabled/>
+        </FloatingLabel>
+        
+        </Form.Group>
+
                       {   GST_flag && 
         
         <Form.Group>  
@@ -774,7 +967,9 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
           label="GST"
           className="mb-3"
         >
-        <Form.Control type="input" id="gst" value={GST_charges} disabled/>
+        <Form.Control type="input" id="gst" 
+        className="custom-input"
+        value={GST_charges} disabled/>
         </FloatingLabel>
         
         </Form.Group>
@@ -788,7 +983,9 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
           label="Platform Fees"
           className="mb-3"
         >
-        <Form.Control type="input" id="platform_fees" value={platform_fees} disabled/>
+        <Form.Control type="input" id="platform_fees" 
+        className="custom-input"
+        value={platform_fees} disabled/>
         </FloatingLabel>
         
         </Form.Group>
@@ -803,13 +1000,19 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
                         label="Event Price"
                         className="mb-3"
                       >
-                      <Form.Control type="input" id="price" value={totalPrice} disabled/>
+                      <Form.Control type="input" id="price"
+                      className="custom-input"
+                       value={totalPrice} disabled/>
                       </FloatingLabel>
                       
                       </Form.Group>
 
-                      <div>
 
+      
+      
+
+      <div>
+                      
       <Form.Group> 
      
       <Form.Check
@@ -824,6 +1027,7 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
             <Form.Label>
             <a href="#" onClick={handleLinkClick}>I agree with Terms and Conditions</a>
         </Form.Label>
+        {isModalOpen && <ShowTerms termsText={termsText} onClose={handleCloseModal} />}
           <Form.Control.Feedback type='invalid'> Terms and Conditions need to be agreed</Form.Control.Feedback>
                 
 

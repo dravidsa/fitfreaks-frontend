@@ -108,7 +108,7 @@ const Header = ({username}) => {
                         )}
                     </li>
                     <li className="nav-item">
-                      {userMessage}
+                     
                     </li>
             
               

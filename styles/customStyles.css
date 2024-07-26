@@ -1,0 +1,50 @@
+/* Custom styles for input fields */
+
+  
+  .custom-input {
+    border: none;
+    border-bottom: 2px solid #ccc;
+    border-radius: 0;
+    padding: 8px 0;
+    display: block;
+    width: 100%; /* Ensure input takes full width */
+  }
+/*
+  label {
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+*/
+
+  .custom-input:focus {
+    outline: none;
+    border-bottom: 2px solid #007bff; /* or any color you prefer */
+  }
+  
+  .custom-form {
+    width: 100%; /* Adjust as needed */
+    max-width: 800px; /* Adjust as needed */
+    margin: 0 auto;
+    padding: 0 16px; /* Default padding for larger screens */
+  }
+
+  
+  /* Media query for small screens */
+  @media (max-width: 600px) {
+    .custom-form {
+      padding: 0 16px; /* Add 16px padding on small screens */
+    }
+  }
+
+
+  .required-field {
+  position: relative;
+}
+
+.required-field label::after {
+  content: ' *';
+  color: red;
+  position: absolute;
+  margin-left: 5px;
+  font-size: 1.2em;
+}
