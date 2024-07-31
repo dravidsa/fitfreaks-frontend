@@ -192,7 +192,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   
 }
  
- async function registerForEvent(event , event_id ,fileUrl, GST_flag, profession_flag , tshirt_flag,platform_fees_flag,accomodation_flag,dob_flag)  {
+ async function registerForEvent(event , event_id ,fileUrl, GST_flag, profession_flag , tshirt_flag,platform_fees_flag,accomodation_flag,dob_flag,terms_flag)  {
   //console.log( "registering for event-" + event.target.profession.value +'-b-'+  event.target.price.value + '-e-' + event.target.dob.value +'-g-' + event.target.gst.value + '-p-' + event.target.platform_fees.value)  ; 
 
   console.log ( "flags are " , GST_flag , accomodation_flag , profession_flag ); 
@@ -280,6 +280,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   const [file, setFile] = useState("");
   //const [termsText, setTermsText] = useState() ; 
   
+  
 
   console.log( "event catagory selected was" + selectedEventCat) ; 
   
@@ -314,6 +315,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   const document_flag = event?.data?.attributes?.document_flag ; 
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const terms_flag =  event?.data?.attributes?.terms_flag ; 
   const termsText = event?.data?.attributes?.terms; 
   
 
@@ -530,7 +532,7 @@ const hiddenFileInput = useRef(null);
       // We got errors!
       console.log( "still some errors" + JSON.stringify(newErrors) );
       setErrors(newErrors) ;  
-      if (!isChecked) {
+      if ( (!isChecked)  && ( terms_flag == true) ){
         console.log( "terms not agreed") ; 
         setStatusMessage("Terms and conditions need to be agreed.") ; 
       }
@@ -539,13 +541,14 @@ const hiddenFileInput = useRef(null);
       // No errors! Put any logic here for the form submission!
       //console.log( "ischecked is ", isChecked ); 
       setStatusMessage("") ; 
+      console.log( "All clear ") ; 
 
-      if (!isChecked) {
+      if ( (!isChecked) && ( terms_flag == true ))  {
         //console.log( "terms not agreed") ; 
         setStatusMessage("Terms and conditions need to be accepted.") ; 
       }
       else  { 
-        //setStatusMessage("Saving Data") ;  
+        setStatusMessage("Saving Data") ;  
         //alert('Thank you for your feedback!') ;
         
         try { 
@@ -575,7 +578,7 @@ const hiddenFileInput = useRef(null);
             }
           }
         
-
+          console.log( "Calling register for Event ") ;
           const id =  await registerForEvent(data , event_id , fileUrl,GST_flag, profession_flag , tshirt_flag,platform_fees_flag,accomodation_flag,dob_flag)  ; 
           if ( id ==0) {
             setStatusMessage("Some error in saving the record, please retry") ;
@@ -629,7 +632,7 @@ const hiddenFileInput = useRef(null);
 
     if ( !gender || gender === '' ) newErrors.gender = 'gender should be selected'
     if ( !blood_group || blood_group === '' ) newErrors.blood_group = 'blood group should be selected.'
-    if ( !event_catagory || event_catagory === '' ) newErrors.event_catagory = 'event catagory should be selected.'
+    //if ( !event_catagory || event_catagory === '' ) newErrors.event_catagory = 'event catagory should be selected.'
     if ( !emergency_name || emergency_name === '' ) newErrors.emergency_name = 'cannot be blank!'
     if ( !emergency_contact || emergency_contact === '' ) newErrors.emergency_contact = 'cannot be blank!'
     else if ( isNaN(emergency_contact) ||  ( emergency_contact.length!=10 )) { 
@@ -662,15 +665,16 @@ const hiddenFileInput = useRef(null);
     if ( document_flag && ( file === '')){
       newErrors.fileUpload ="select a document for ID proof to upload. "
     }
-    /*
-    console.log ( "value of agree-" + isChecked +"-" ) ;
-    if ( agree == false ) { 
+   
+    console.log ( "value of agree-" + terms_flag +"-" ) ;
+    if ( ( agree == false ) && ( terms_flag == true ) ){ 
       console.log ( "terms need to agree") ; 
-      newErrors.agree = 'Terms and conditions need to be agreed. ';  }
-      else { console.log( "terms already agreed" ); 
-        //newErrors.agree =''; 
+      newErrors.agree = 'Terms and conditions need to be agreed. ';  
     }
-    */
+      else { console.log( "terms already agreed or need not be agreed " ); 
+          //newErrors.agree =''; 
+    }
+  
 
     return newErrors
   }
@@ -797,7 +801,6 @@ noValidate validated={validated} onSubmit={handleSubmit} >
         <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleEventCatChange} required disabled={!isInputEnabled || event_cat.length==0 }
           as='select' 
           className="custom-input"
-          isInvalid={ !!errors.event_catagory}
         >
            <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
         <option></option>
@@ -1010,9 +1013,10 @@ noValidate validated={validated} onSubmit={handleSubmit} >
 
       
       
-
+      { terms_flag &&    
       <div>
-                      
+
+         
       <Form.Group> 
      
       <Form.Check
@@ -1028,13 +1032,15 @@ noValidate validated={validated} onSubmit={handleSubmit} >
             <a href="#" onClick={handleLinkClick}>I agree with Terms and Conditions</a>
         </Form.Label>
         {isModalOpen && <ShowTerms termsText={termsText} onClose={handleCloseModal} />}
-          <Form.Control.Feedback type='invalid'> Terms and Conditions need to be agreed</Form.Control.Feedback>
+          <Form.Control.Feedback type='invalid'> XX Terms and Conditions need to be agreed</Form.Control.Feedback>
                 
 
       </Form.Group>
       
           
         </div>
+  }
+
  
       <div> {eventMessage} </div>
 

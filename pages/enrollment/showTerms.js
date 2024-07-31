@@ -1,6 +1,7 @@
-'use client'; 
+
 import React, { useState } from 'react'
 import Modal from 'react-modal'
+//import * as DOMPurify from 'dompurify'; // Import all as DOMPurify
 
 import DOMPurify from 'dompurify'
 
