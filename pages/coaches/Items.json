@@ -1,0 +1,30 @@
+{
+    "items": {
+      "bootstrap": [
+       "#bootstrap carousel objects"
+      ],
+      "elastic": [
+      "#elastic carousel objects"
+      ],
+      "responsive": [
+        {
+          "id": 1,
+          "title": "Swiper Carousel Example",
+          "text": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste quos mollitia sed quod consectetur at quam dolore praesentium neque eos assumenda iusto nam laborum laboriosam odio blanditiis possimus accusantium recusandae porro exercitationem itaque",
+          "imageUrl": "/images/muscle.jpg"
+        },
+        {
+          "id": 2,
+          "title": "Swiper Carousel Example",
+          "text": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste quos mollitia sed quod consectetur at quam dolore praesentium neque eos assumenda iusto nam laborum laboriosam odio blanditiis possimus accusantium recusandae porro exercitationem itaque",
+          "imageUrl": "/images/cycling.jpg"
+        },
+        {
+          "id": 3,
+          "title": "Swiper Carousel Example",
+          "text": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste quos mollitia sed quod consectetur at quam dolore praesentium neque eos assumenda iusto nam laborum laboriosam odio blanditiis possimus accusantium recusandae porro exercitationem itaque",
+          "imageUrl": "/images/Gym.jpg"
+        }
+      ]
+    }
+  }

@@ -1,0 +1,43 @@
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  .mySwiper {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .swipItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 10px;
+  }
+  
+  .imgBox img {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 10px;
+  }
+  
+  .detail {
+    margin-top: 15px;
+  }
+  
+  .detail h2 {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .detail p {
+    font-size: 16px;
+    color: #666;
+  }
+  

@@ -47,6 +47,10 @@ const Footer = ({contactData}) => {
                   <li>
                     <Link href="/contact">contact</Link>
                   </li>
+                  <li>
+                    <Link href="/privacy">Privacy Policy</Link>
+                  </li>
+                  
                 </ul>
               </div>
               <div className="col-lg-3 d-flex justify-content-center align-items-center mb-3 mb-lg-0 justify-content-lg-end">
