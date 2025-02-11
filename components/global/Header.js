@@ -3,6 +3,7 @@ import { Navbar } from "react-bootstrap";
 import { MdOutlineEmail, MdOutlineCall } from "react-icons/md";
 import AuthButton from "./AuthButton" ; 
 import { useState, useEffect } from 'react';
+import Image from "next/image";
 
 
 let message = "           Welcome guest" ; 
@@ -31,9 +32,12 @@ const Header = ({username}) => {
     <div className="header">
       <div className="container">
         <Navbar className="p-0" bg="none" expand="lg">
-          <Link className="navbar-brand" href="/" legacyBehavior>
-            <h2 className="logo">FitFreaks</h2>
-          </Link>
+        
+          <a>
+              <Image src="/fitfreaks_logo.jpg" alt="FitFreaks Logo" width={150} height={50} />
+            </a>
+
+      
           <Navbar.Toggle
             className="navbar-toggler collapsed"
             type="button"
