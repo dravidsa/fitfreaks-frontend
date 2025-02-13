@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 
-import RegistrationTemplate from "./templates/RegistrationTemplate" ; 
+import RegistrationTemplate from "./templates/registrationTemplate" ; 
 
 export default async function sendMail(req,res) {
     const EMAIL_USER =  process.env.EMAIL_USER ; 

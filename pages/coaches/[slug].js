@@ -4,7 +4,7 @@ import Testimonial from '../../components/testimonial'
 import Layout from "../../components/global/layout";
 import InnerPageLayout from "../../components/inner-page-layout";
 
-
+var name = "Coach Details" ; 
 
 
 export default function CoachSinglePage ({ coaches, slug })  {
