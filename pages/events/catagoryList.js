@@ -69,7 +69,7 @@ const CatagoryList = () => {
      
     
     return (
-        <div>
+        <div style={{ paddingLeft: "50px" , paddingRight: "50px" }}>
               <Layout title={"Catagory"}>
               <InnerPageLayout title={"Select Catagory"} />
             { eventCat?.map((event_cat) => (

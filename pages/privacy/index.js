@@ -30,6 +30,13 @@ const PrivacyPolicy = () => {
           <li>Website usage data (via cookies and analytics tools)</li>
       </ul>
       
+      <h3>c) Your fitness related Information(If you give us the permission)</h3>
+      <ul>
+          <li>Your acitivty Data(Steps,Distance,Calories,etc)</li>
+          <li>Your health Data(Heart Rate,Sleep,etc)</li>
+          <li>Activity Track Details(GPS,elevation,pace,distance,speed,etc)</li>
+          <li>Your peformance Metrics (steps,calories,heart rate,etc)</li>
+      </ul>
       <h2>2. How We Use Your Information</h2>
       <ul>
           <li>To provide and improve our services</li>
