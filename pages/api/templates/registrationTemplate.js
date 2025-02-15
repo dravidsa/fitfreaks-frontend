@@ -12,7 +12,7 @@ export default function  RegistrationTemplate({name , event_catagory , enrollmen
 
     <Container>
       <Row>
-        <Col><img src="https://fitfreaks.in/images/LSOM_3.jpg" /> </Col>
+       
 
         <Col>
         <p>

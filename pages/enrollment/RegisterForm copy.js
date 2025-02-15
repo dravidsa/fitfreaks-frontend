@@ -533,32 +533,28 @@ const hiddenFileInput = useRef(null);
     //console.log ( "got this as data "+ JSON.stringify( data)) ; 
     // get our new errors
     console.log("handling submit") ; 
-   
     const newErrors = findFormErrors()
     // Conditional logic:
     if ( Object.keys(newErrors).length > 0 ) {
       // We got errors!
-     // alert( "still some errors" + JSON.stringify(newErrors) );
       console.log( "still some errors" + JSON.stringify(newErrors) );
       setErrors(newErrors) ;  
-     
-      return ;
-
-    } 
-    if ( (!isChecked)  && terms_flag  ){
-      console.log( "terms not agreed") ; 
-      setStatusMessage("Terms and conditions need to be agreed.") ; 
-      return ;
-    }
-    
-    else {
+      if ( (!isChecked)  && terms_flag  ){
+        console.log( "terms not agreed") ; 
+        setStatusMessage("Terms and conditions need to be agreed.") ; 
+      }
+      
+    } else {
       // No errors! Put any logic here for the form submission!
       //console.log( "ischecked is ", isChecked ); 
       setStatusMessage("Seems ok for now. ") ; 
       console.log( "All clear  for now ") ; 
 
-      
- 
+      if ( (!isChecked) && ( terms_flag ))  {
+        //console.log( "terms not agreed") ; 
+        setStatusMessage("Terms and conditions need to be accepted.") ; 
+      }
+      else  { 
         setStatusMessage("Saving Data") ;  
         //alert('Thank you for your feedback!') ;
         
@@ -621,7 +617,7 @@ const hiddenFileInput = useRef(null);
         setStatusMessage("Error saving data. Please try again.");
       }
       
-    
+    }
     }
   }
 
@@ -679,7 +675,7 @@ const hiddenFileInput = useRef(null);
     }
    
     console.log ( "value of agree-" + terms_flag +"-" ) ;
-    if ( ( !isChecked) && ( terms_flag) ){ 
+    if ( ( agree == false ) && ( terms_flag) ){ 
       console.log ( "terms need to agree") ; 
       newErrors.agree = 'Terms and conditions need to be agreed. ';  
     }

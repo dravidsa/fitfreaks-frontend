@@ -48,6 +48,7 @@ const UpcomingEvents = ({ events }) => {
               {events?.slice(0, 6).map((evt) => (
                 <div key={evt.id} className="col-md-6 col-lg-4 mb-4">
                   <div className="upcoming-events__item">
+                  <a target="_self" href={`/events/${evt?.attributes?.slug}`}>
                     <div className="image">
                       <img
                         className="img-fluid"
@@ -62,6 +63,7 @@ const UpcomingEvents = ({ events }) => {
                         ""
                       )}
                     </div>
+                    </a>
                     <div className="upcoming-events__item__info">
                       <div className="title">
                         <h3>
