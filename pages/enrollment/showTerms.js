@@ -1,20 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Modal from 'react-modal'
 //import * as DOMPurify from 'dompurify'; // Import all as DOMPurify
 
-import DOMPurify from 'dompurify'
+//import DOMPurify from 'dompurify'
 
 const ShowTerms = ({termsText, onClose}) => {
    
-
-  
    const customStyles = {
       overlay: {
          backgroundColor: 'rgba(0, 0, 0, 0.6)' , 
          zIndex: 1000 // Ensure overlay has a high z-index
       },
       content: {
-         top: '50%',
+         top: '60%',
          left: '50%',
          right: 'auto',
          bottom: 'auto',
@@ -26,7 +24,17 @@ const ShowTerms = ({termsText, onClose}) => {
       }
    }
 
-   const sanitizedHTML = DOMPurify.sanitize(termsText) ; 
+   const [sanitizedHTML, setSanitizedHTML] = useState(termsText);
+
+   useEffect(() => {
+      // Import DOMPurify dynamically on client-side only
+      import('dompurify').then((DOMPurify) => {
+         setSanitizedHTML(DOMPurify.default.sanitize(termsText));
+      });
+   }, [termsText]);
+
+   //const sanitizedHTML = DOMPurify.sanitize(termsText) ; 
+   
 
    return (
     
