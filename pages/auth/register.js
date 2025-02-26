@@ -177,6 +177,16 @@ const Register = () => {
         }
         
     }
+    const handleSocialLogin = (provider) => {
+      // Store the current URL in localStorage to redirect back after login
+      localStorage.setItem('returnTo', window.location.pathname);
+      
+      // Get the base API URL from your environment variables
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1637';
+      
+      // Redirect to the social login endpoint
+      window.location.href = `${apiUrl}/api/connect/${provider}?callback=${window.location.origin}/auth/callback`;
+  };
     return (
         <>
 
@@ -189,7 +199,7 @@ const Register = () => {
         <Card.Text>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
      
-      <Form.Group>  
+      <Form.Group className="mb-4">  
     
       <FloatingLabel
         label="Email address"
@@ -201,19 +211,23 @@ const Register = () => {
       </Form.Group>
 
     
-
+      <Form.Group className="mb-4">  
       <FloatingLabel
         label="Password">
         <Form.Control type="password" id = "password" placeholder="enter your password" minlength="6" required />
       </FloatingLabel>
-
+      </Form.Group>
+      
+      <Form.Group className="mb-4">  
       <FloatingLabel
         label="rePassword">
         <Form.Control type="password" id = "repassword" placeholder="enter your password again" minlength="6" required />
       </FloatingLabel>
-  
-
+      </Form.Group>
+    <div className="d-flex justify-content-center"> 
     <Button type="submit">Register</Button>{' '}
+    </div>
+    
      
      <label> {error}</label>
      

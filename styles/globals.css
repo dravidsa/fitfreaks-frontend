@@ -1,1 +1,24 @@
 
+.guest-text {
+    color: red;
+    font-weight: 500;  /* optional: makes the text slightly bold */
+}
+
+.user-text {
+    color: green;
+    font-weight: 500;  /* optional: makes the text slightly bold */
+}
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;  /* ensures header stays above other content */
+    background-color: white;  /* or whatever your header background color is */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);  /* optional: adds subtle shadow */
+}
+
+/* Add padding to body to prevent content from hiding under fixed header */
+body {
+    padding-top: 70px;  /* adjust this value based on your header height */
+}

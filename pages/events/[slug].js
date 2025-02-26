@@ -7,15 +7,20 @@ import InnerPageLayout from "../../components/inner-page-layout";
 import Link from "next/link";
 import SectionTitle from "../../components/global/section-title";
 import md from 'markdown-it';
+import GPXMap from "../../components/global/showGPX";
+import $ from 'jquery';
 
 const EventSinglePage = ({events, slug}) => {
   const event = events?.filter((evt) => evt?.attributes?.slug === slug);
-  console.log( "event obj is " +JSON.stringify(event) ); 
+  const gpsMap = event[0].attributes?.gpsMap;
+
+  console.log( "map is  " + gpsMap) ; 
 
   const { attributes } = event[0];
   const { date, image, tickets, time, name, location, description, organizer, price , attendee_catagories , event_catagories} =
     attributes;
   console.log( "event and attendee cats are " + JSON.stringify(attendee_catagories) ) ; 
+  //console.log( "gpsMap is " + gpsMap)  ; 
   console.log(JSON.stringify(event_catagories)) ; 
  
   ///const enrollment_url = "/enrollment?event_id=" + event[0].id + "&event_name="+name+""; 
@@ -40,6 +45,12 @@ const EventSinglePage = ({events, slug}) => {
               />
               <h2 className="pt-3 mb-3">About {name}</h2>
               <div className="singlePage__event-description" dangerouslySetInnerHTML={{ __html: md().render(description) }} />
+             { gpsMap && (
+              <React.StrictMode>
+                <GPXMap gpxData={gpsMap} />
+              </React.StrictMode>
+             )
+}
             </div>
             <div className="col-lg-4">
              <div className="singlePage__sidebar">

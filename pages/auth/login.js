@@ -157,7 +157,7 @@ const handleSubmit =  async (data) => {
         <Card.Text>
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
      
-      <Form.Group>  
+      <Form.Group className="mb-4">  
     
       <FloatingLabel
         label="Email address"
@@ -169,16 +169,17 @@ const handleSubmit =  async (data) => {
       </Form.Group>
 
     
-
+      <Form.Group className="mb-4">  
       <FloatingLabel
         label="Password">
         <Form.Control type="password" id = "password" placeholder="enter your password" required />
       </FloatingLabel>
+      </Form.Group>
 
   
-
-    <Button type="submit">Register</Button>{' '}
-     
+      <div className="d-flex justify-content-center"> 
+    <Button type="submit">Login</Button>{' '}
+    </div>
      <label> {error}</label>
     </Form>
           

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GPX on Google Map</title>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkSildeaHYrqEZDxrSOmdv01enL5bZePs&libraries=geometry&callback=initMap" async defer></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> </head>
+<body>
+<div id="map" style="width: 600px; height: 400px;"></div>
+
+<script>
+  function initMap() {
+    const map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: 0, lng: 0 }, // Initial center, will be updated
+      zoom: 2 // Initial zoom, will be adjusted
+    });
+
+    $.ajax({
+    url:"http://localhost:3000/activity_18297941698.gpx" , 
+      dataType: "xml",
+    success: function(xml) {
+      const points = [];
+      const elevations = [];
+      const bounds = new google.maps.LatLngBounds();
+      let totalDistance = 0;
+      let totalAscent = 0;
+      let totalDescent = 0;
+
+      $(xml).find("trkpt").each(function() {
+        const lat = parseFloat($(this).attr("lat"));
+        const lon = parseFloat($(this).attr("lon"));
+        const ele = parseFloat($(this).find("ele").text());
+
+        if (!isNaN(lat) && !isNaN(lon)) {
+          const p = new google.maps.LatLng(lat, lon);
+          points.push(p);
+          bounds.extend(p);
+          elevations.push(ele); //Store elevations separately for smoother calculations
+
+          if (points.length > 1) {
+            totalDistance += google.maps.geometry.spherical.computeDistanceBetween(points[points.length - 2], p);
+          }
+        } else {
+          console.error("Invalid coordinates found in GPX file.");
+        }
+      });
+
+
+      //Elevation Calculation (Improved):
+      if (elevations.length > 1){
+        for (let i = 1; i < elevations.length; i++){
+          const elevationChange = elevations[i] - elevations[i-1];
+          if (elevationChange > 0) totalAscent += elevationChange;
+          else totalDescent -= elevationChange; //Descent is negative change
+        }
+      } else if (elevations.length > 0) {
+          console.warn("Only one elevation point found in GPX file. Ascent/Descent cannot be calculated.");
+      } else {
+        console.warn("No elevation data found in GPX file. Ascent/Descent cannot be calculated.");
+      }
+
+
+      if (points.length > 0) {
+        const polyline = new google.maps.Polyline({
+          path: points,
+          strokeColor: "#FF0000",
+          strokeOpacity: 1.0,
+          strokeWeight: 2
+        });
+        polyline.setMap(map);
+        map.fitBounds(bounds);
+
+        const distanceInKm = totalDistance / 1000;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = `Total Distance: ${distanceInKm.toFixed(2)} km<br>`;
+
+        if(totalAscent !== undefined) resultsDiv.innerHTML += `Total Ascent: ${totalAscent.toFixed(1)} m<br>`;
+        if(totalDescent !== undefined) resultsDiv.innerHTML += `Total Descent: ${totalDescent.toFixed(1)} m<br>`;
+      } else {
+        console.error("No valid coordinates found in GPX file.");
+        alert("Error: No valid coordinates found in the GPX file.");
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error loading GPX file:", error);
+      alert("Error loading GPX file. Please check the URL and ensure the file is accessible.");
+    }
+  });
+}
+
+</script>
+<div id="results"></div>
+</body>
+</html>
+

@@ -89,7 +89,11 @@ const Header = ({username}) => {
                   Contact
                 </Link>
               </li>
-             
+              <li className="nav-item">
+                <Link className="nav-link" href="/auth/garminConnect">
+                  Garmin
+                </Link>
+              </li>
             
                     {!isLogged && ( 
                         <li className="nav-item">
@@ -111,8 +115,15 @@ const Header = ({username}) => {
                             </Link>
                         )}
                     </li>
-                    <li className="nav-item">
-                     
+                    <li className="nav-link">
+                   
+                    {!isLogged ? (
+                      <span className="guest-text">Guest </span>
+                    ):(
+                      <span className="user-text">{username} </span>
+                    )}
+
+                    
                     </li>
             
               

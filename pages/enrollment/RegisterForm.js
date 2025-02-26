@@ -541,6 +541,12 @@ const hiddenFileInput = useRef(null);
      // alert( "still some errors" + JSON.stringify(newErrors) );
       console.log( "still some errors" + JSON.stringify(newErrors) );
       setErrors(newErrors) ;  
+      if ( (!isChecked)  && terms_flag  ){
+        console.log( "terms not agreed") ; 
+        setStatusMessage("Terms and conditions need to be agreed.") ; 
+        //alert( "terms not agreed") ;
+        
+      }
      
       return ;
 
@@ -548,7 +554,8 @@ const hiddenFileInput = useRef(null);
     if ( (!isChecked)  && terms_flag  ){
       console.log( "terms not agreed") ; 
       setStatusMessage("Terms and conditions need to be agreed.") ; 
-      return ;
+      alert( "terms not agreed") ;
+      
     }
     
     else {
