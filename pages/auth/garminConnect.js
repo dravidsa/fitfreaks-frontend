@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 
+
 const GarminConnect = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
