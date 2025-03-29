@@ -1,0 +1,35 @@
+.event-banner-preview {
+  max-height: 300px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.category-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.form-switch {
+  padding-left: 2.5em;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.card {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.event-management-header {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}

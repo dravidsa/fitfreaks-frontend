@@ -11,11 +11,15 @@ const GarminConnect = () => {
 
         try {
             const response = await fetch("http://fitfreaks.in/api/getRequestToken");
-            const data = await response.json();
+            const params = new URLSearchParams(response);
 
-            if (data.oauth_token) {
+            const oauthToken = params.get('oauth_token');         // 'xxx'
+            const oauthTokenSecret = params.get('oauth_token_secret');
+            //const data = await response.json();
+
+            if (oauthToken) {
                 // Redirect user to Garmin authentication page
-                window.location.href = `https://connect.garmin.com/oauthConfirm?oauth_token=${data.oauth_token}&oauth_callback=${encodeURIComponent("https://fitfreaks.in/api/auth/callback")}`;
+                window.location.href = `https://connect.garmin.com/oauthConfirm?oauth_token=${oauthToken}&oauth_callback=${encodeURIComponent("https://fitfreaks.in/api/auth/callback")}`;
             } else {
                 setError("Failed to get request token");
             }

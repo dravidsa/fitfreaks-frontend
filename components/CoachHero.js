@@ -1,27 +1,34 @@
-import React, { useEffect } from "react";
-import { FaRegLightbulb } from "react-icons/fa";
-import { BiLoader } from "react-icons/bi";
-import { MdOutlineEvent } from "react-icons/md";
-import Link from "next/link";
+import React from 'react';
+import { useRouter } from 'next/router';
 
-const CoachHero = (image , tagline , description) => {
-  console.log ( "coach image is " , image , tagline , description) ; 
+const CoachHero = ({ image, name, tagline, category, coachId }) => {
+  const router = useRouter();
+
+  const handleBookAppointment = () => {
+    router.push(`/appointments?coachId=${coachId}`);
+  };
+
   return (
-    <div
-      className="hero bg-image"
-      style={{ backgroundImage: "url({image})" }}
-    >
-      <div className="hero__wrapper">
+    <div className="coach-hero position-relative">
+      <img 
+        src={image || "/images/placeholder-hero.jpg"} 
+        alt={name}
+        className="w-100"
+        style={{ height: '400px', objectFit: 'cover' }}
+      />
+      <div className="position-absolute bottom-0 start-0 w-100 p-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
         <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-xxl-6 col-xl-7 col-lg-8 col-md-10 text-center">
-              <h2 className="hero__title">
-                {{tagline}}
-              </h2>
-              <p className="hero__description mt-4">
-                {description}
-              </p>
-          
+          <div className="row">
+            <div className="col-md-8">
+              <h1 className="text-white">{name}</h1>
+              <p className="text-white mb-0">{tagline}</p>
+              {category && <span className="badge bg-primary mt-2">{category}</span>}
+            </div>
+            <div className="col-md-4 text-md-end">
+              <button className="btn btn-primary btn-lg me-2" onClick={handleBookAppointment}>
+                Book Appointment
+              </button>
+              <button className="btn btn-success btn-lg">Join Now</button>
             </div>
           </div>
         </div>

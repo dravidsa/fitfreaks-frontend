@@ -3,14 +3,14 @@ import React from 'react'
 
     //carousels/Responsive.js
     import { Carousel } from "react-responsive-carousel";
-    import { items } from "./Items.json";
+    import itemsData from "./Items.json";
     import "react-responsive-carousel/lib/styles/carousel.min.css";
     import styles from "../../styles/Responsive.module.css";
 
     import Card from 'react-bootstrap/Card';
 
     export default function CoachesPage() {
-      const { responsive } = items;
+      const { responsive } = itemsData;
       return (
         <div className={styles.container}>
           <Carousel

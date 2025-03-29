@@ -13,6 +13,7 @@ import Link from 'next/link';
 import Groups from "../components/groups"
 import Coaches from "../components/coaches"
 import AuthButton from "../components/global/AuthButton"
+import JoinUs from "../components/join-us"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,8 +50,7 @@ export default function Home({ events, blogs, groups  , coaches}) {
       <Coaches coaches={coachData} /> 
 
       <HowItWorks />
-    
-
+      <JoinUs />
     </Layout>
   );
 }

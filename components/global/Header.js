@@ -4,7 +4,7 @@ import { MdOutlineEmail, MdOutlineCall } from "react-icons/md";
 import AuthButton from "./AuthButton" ; 
 import { useState, useEffect } from 'react';
 import Image from "next/image";
-
+import { API_URL } from "../../config";
 
 let message = "           Welcome guest" ; 
 //let username = localStorage.getItem('username');
@@ -22,12 +22,48 @@ const Header = ({username}) => {
 
 
   const [isLogged, setIsLogged] = useState();
+  const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
-      setIsLogged(!!localStorage.getItem('jwt'));
+    const checkAuth = async () => {
+      const token = localStorage.getItem('jwt');
+      const userEmail = localStorage.getItem('userEmail');
+      setIsLogged(!!token);
+      console.log('Auth check - Token:', !!token, 'Email:', userEmail);
+
+      if (token && userEmail) {
+        try {
+          const response = await fetch(`${API_URL}/api/fitfreaks-users?filters[email]=${encodeURIComponent(userEmail)}&populate=*`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          console.log('API Response:', response);
+          if (response.ok) {
+            const userData = await response.json();
+            console.log('Full API Response:', userData);
+            console.log('User data array:', userData.data);
+            console.log('First user:', userData.data?.[0]);
+            console.log('User attributes:', userData.data?.[0]?.attributes);
+            const role = userData.data?.[0]?.attributes?.role;
+            console.log('Detected role:', role);
+            
+            setUserRole(role || '');
+            console.log('Set userRole to:', role);
+          } else {
+            console.error('API Response not OK:', response.status);
+          }
+        } catch (error) {
+          console.error('Error fetching user role:', error);
+        }
+      }
+    };
+
+    checkAuth();
   }, []);
 
   console.log ( "username in headers is " + username)
+  console.log('Current role state:', userRole);
   return (
     <div className="header">
       <div className="container">
@@ -80,7 +116,7 @@ const Header = ({username}) => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" href="/coaches">
+                <Link className="nav-link" href="/coachCategories">
                   Coaches
                 </Link>
               </li>
@@ -94,6 +130,19 @@ const Header = ({username}) => {
                   Garmin
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link" href="/ecommerce">
+                  Store
+                </Link>
+              </li>
+              {console.log('Menu render - isLogged:', isLogged, 'userRole:', userRole)}
+              {isLogged && (userRole === 'event_organiser' || userRole === 'platform_admin') && (
+                <li className="nav-item">
+                  <Link className="nav-link" href="/manage">
+                    Content
+                  </Link>
+                </li>
+              )}
             
                     {!isLogged && ( 
                         <li className="nav-item">

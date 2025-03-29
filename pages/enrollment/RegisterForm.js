@@ -350,17 +350,19 @@ if ( (GST_flag) && ( GST_source== "End_User")) {
 
 }
 console.log("GST charges are " , basePrice + "-" + GST_percent + "-"+ GST_charges + "-") ; 
-
+console.log("platform fees source is  " , platform_fees_source) ; 
 if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){ 
+  console.log( "going to charge plat fees") ; 
   platform_fees = basePrice * platform_fees_percent /100 ; 
-  totalPrice = totalPrice + platform_fees ; 
+  totalPrice =  parseFloat(totalPrice) + parseFloat(platform_fees) ;
+  console.log("total price is " , totalPrice) ; 
 }
-
+ /*
   if (selectedEventCat && selectedEventCat !== '') {
     console.log("Getting price for selected event catagory " + selectedEventCat);
     totalPrice = calculateCharges(selectedEventCat, basePrice) || basePrice;
   }
-  
+  */
 
 const hiddenFileInput = useRef(null);
 //setFileName("File not yet selected")
