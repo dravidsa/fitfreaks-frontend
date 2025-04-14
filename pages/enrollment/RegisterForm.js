@@ -7,10 +7,11 @@ import { API_URL } from "../../config";
 import Col from 'react-bootstrap/Col';
 import axios from "axios";
 import { useRouter } from 'next/router';
-import React from "react";
+import React, { useEffect } from "react";
 import DatePicker from "react-datepicker";
 //import '../../styles/customStyles.css';  
 import ShowTerms from './showTerms';
+import styles from '@/styles/enrollment/RegisterForm.module.css';
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -195,7 +196,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
  async function registerForEvent(event , event_id ,fileUrl, GST_flag, profession_flag , tshirt_flag,platform_fees_flag,accomodation_flag,dob_flag,terms_flag)  {
   //console.log( "registering for event-" + event.target.profession.value +'-b-'+  event.target.price.value + '-e-' + event.target.dob.value +'-g-' + event.target.gst.value + '-p-' + event.target.platform_fees.value)  ; 
 
-  console.log ( "flags are " ,terms_flag); 
+  console.log ( "flags are " ,terms_flag, "for event " + event_id); 
   
   var gst  , tshirt_size , accomodation_option , platform_fees , dob , profession  ;
   
@@ -229,6 +230,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
                  blood_group : event.target.blood_group.value , 
                  emergency_contact_name:  event.target.emergency_name.value ,
                  emergency_contact_number:  event.target.emergency_contact.value , 
+                 event_id : event_id ,
                  event_name : event.target.event_name.value ,
                  group_name : event.target.group_name.value ,   
                  total_price : event.target.price.value ,
@@ -269,18 +271,27 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
 
   const groups = await getGroups() ; 
   console.log ( "got running groups as " + JSON.stringify(groups)) ; 
+  var totalPrice = 0 ; 
+  var GST_charges = 0 ; 
+  var platform_fees  = 0 ; 
+  var basePrice = 0 ; 
 
   function RegisterForm ({event ,selectedEventCat}) {
 
-  const [basePrice,setPrice] = useState(event?.data?.attributes?.price) ; 
+  //const [basePrice,setPrice] = useState(event?.data?.attributes?.price) ; 
   const [event_name , setEventName] = useState(event?.data?.attributes?.name)
-  const [event_id , setEventId ] = useState(event?.data?.attributes?.id ); 
+  const [event_id , setEventId ] = useState(event?.data?.id); 
   const [enrollmentId,setEnrollmentId] = useState(0) ; 
   const [fileName,setFileName] =useState("select File to Upload") ; 
   const [file, setFile] = useState("");
-  //const [termsText, setTermsText] = useState() ; 
   
-  
+
+  useEffect(() => {
+    if (event?.data?.id) {
+      setEventId(event.data.id);
+      console.log("Setting event_id to:", event.data.id);
+    }
+  }, [event]);
 
   console.log( "event catagory selected was" + selectedEventCat) ; 
   
@@ -317,7 +328,7 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
   const [isModalOpen, setIsModalOpen] = useState(false)
   const terms_flag =  event?.data?.attributes?.terms_flag ; 
   const termsText = event?.data?.attributes?.terms; 
-  
+  //var totalPrice = 0 ; 
 
 
 
@@ -338,10 +349,19 @@ async function updatePaymentStatus(enrollmentId, pgPaymentId , pgOrderId ,pgSign
     accomodation_options_arr = accomodation_options.split(',');
   }
 
+   
+  if (selectedEventCat && selectedEventCat !== '') {
+    console.log("Getting price for selected event catagory " + selectedEventCat);
+    basePrice = getBasePrice(selectedEventCat, basePrice) ; 
+    totalPrice = getTotalPrice(basePrice) ; 
+  }
+
+  
+  function getTotalPrice( basePrice) { 
   console.log("event details are" , JSON.stringify(event)) ; 
-  var totalPrice = basePrice  ; 
-  var GST_charges = 0 ; 
-  var platform_fees  = 0 ; 
+  
+  totalPrice = basePrice  ; 
+ 
 
 
 if ( (GST_flag) && ( GST_source== "End_User")) {
@@ -357,12 +377,9 @@ if ( (platform_fees_flag) && ( platform_fees_source == "End_User" )){
   totalPrice =  parseFloat(totalPrice) + parseFloat(platform_fees) ;
   console.log("total price is " , totalPrice) ; 
 }
- /*
-  if (selectedEventCat && selectedEventCat !== '') {
-    console.log("Getting price for selected event catagory " + selectedEventCat);
-    totalPrice = calculateCharges(selectedEventCat, basePrice) || basePrice;
-  }
-  */
+
+return totalPrice ; 
+}
 
 const hiddenFileInput = useRef(null);
 //setFileName("File not yet selected")
@@ -445,7 +462,9 @@ const hiddenFileInput = useRef(null);
     function handleEventCatChange(event) { 
       console.log("new value is "  , event.target.value) ; 
       setField('event_catagory', event.target.value ) ; 
-      setPrice(calculateCharges(event.target.value)); 
+      basePrice = getBasePrice(event.target.value); 
+      totalPrice = getTotalPrice(basePrice) ;  
+     // setPrice(calculateCharges(event.target.value)); 
     
     }
   
@@ -462,7 +481,8 @@ const hiddenFileInput = useRef(null);
     
     }
 
-  function calculateCharges( event_catagory_selected  ,basePrice) {   
+  //function calculateCharges( event_catagory_selected  ,basePrice) {   
+    function getBasePrice( event_catagory_selected  ,basePrice) {   
     
     console.log( "looking for" + event_catagory_selected + "in " + JSON.stringify(event_cat) + "base price is " + basePrice) ; 
   
@@ -676,7 +696,7 @@ const hiddenFileInput = useRef(null);
       newErrors.accomodation_option = 'Need to select room type ' ; 
     }
 
-    console.log( "dob is " + dob ) ; 
+    console.log ( "dob is " + dob ) ; 
     if ( dob_flag && ( dob ==='dd/mm/yyyy' || !dob  )) {
 
       newErrors.dob = 'Need to select Date of Birth' ; 
@@ -709,27 +729,29 @@ const hiddenFileInput = useRef(null);
 
   
 <Form 
-className="custom-form"
+className={styles.customForm}
 noValidate 
 validated={validated} 
 onSubmit={handleSubmit} 
 >
-        <Form.Group>  
+
+        <Form.Group className={styles.formGroup}>  
                       <FloatingLabel
                         label="Event Name"
+                        className={styles.formLabel}
                       >
                       <Form.Control type="input" id="event_name" value={event_name} disabled/>
                       </FloatingLabel>
                       
                       </Form.Group>
 
-        <Form.Group>  
+        <Form.Group className={styles.formGroup}>  
         <FloatingLabel
           label="Email address"
-          className="mb-3"
+          className={styles.formLabel}
         >
           <Form.Control type="email" id="email" placeholder="name@example.com" 
-          className="custom-input"
+          className={styles.customInput}
           onChange={ e => setField('email', e.target.value) }
           isInvalid={ !!errors.email }
           required disabled={!isInputEnabled}/>
@@ -739,10 +761,10 @@ onSubmit={handleSubmit}
     
         <FloatingLabel
           label="Mobile "
-           className="mb-3"
+           className={styles.formLabel}
         >
           <Form.Control type="number" id = "mobile" placeholder="enter your Mobile Number" required disabled={!isInputEnabled}
-            className="custom-input"
+            className={styles.customInput}
             onChange={ e => setField('mobile', e.target.value) }
             isInvalid={ !!errors.mobile }
           />
@@ -750,9 +772,9 @@ onSubmit={handleSubmit}
         </FloatingLabel>
   
   
-        <FloatingLabel label="Full Name"   className="mb-3">
+        <FloatingLabel label="Full Name"   className={styles.formLabel}>
           <Form.Control type="input" id="fullName" placeholder="Enter your full name"  required disabled={!isInputEnabled}
-          className="custom-input"
+          className={styles.customInput}
           onChange={ e => setField('fullName', e.target.value) }
           isInvalid={ !!errors.fullName }
           /> 
@@ -760,10 +782,10 @@ onSubmit={handleSubmit}
         </FloatingLabel>
 
         { dob_flag &&  
-        <FloatingLabel label="Date of Birth"   className="mb-3">
+        <FloatingLabel label="Date of Birth"   className={styles.formLabel}>
         <Form.Control
                 type="date"
-                className="custom-input"
+                className={styles.customInput}
                 id="dob"
                 name="dob"
                 placeholder="Date of birth "
@@ -780,10 +802,10 @@ onSubmit={handleSubmit}
 
       
   
-        <FloatingLabel label="Select Gender"  className="mb-3">
+        <FloatingLabel label="Select Gender"  className={styles.formLabel}>
         <Form.Select id="gender" aria-label="Gender" required disabled={!isInputEnabled}
          as='select' 
-         className="custom-input"
+         className={styles.customInput}
          onChange={ e => setField('gender', e.target.value) }
          isInvalid={ !!errors.gender }
         >
@@ -798,10 +820,10 @@ onSubmit={handleSubmit}
         <Form.Control.Feedback type='invalid'>{ errors.gender }</Form.Control.Feedback>
       </FloatingLabel>
   
-      <FloatingLabel label="Select Blood Group"  className="mb-3">
+      <FloatingLabel label="Select Blood Group"  className={styles.formLabel}>
         <Form.Select id="blood_group" aria-label="blood_group" required disabled={!isInputEnabled}
          as='select' 
-         className="custom-input"
+         className={styles.customInput}
          onChange={ e => setField('blood_group', e.target.value) }
          isInvalid={ !!errors.blood_group }
         >
@@ -821,122 +843,145 @@ onSubmit={handleSubmit}
       </FloatingLabel>
 
       { selectedEventCat && (
-        <FloatingLabel label="Select Event Catagory"  className="mb-3" >
-        <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleEventCatChange} required disabled={!isInputEnabled || event_cat.length==0 }
-          as='select' 
-          className="custom-input"
-        >
-           <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
-        <option></option>
-          <option value={selectedEventCat} selected>{selectedEventCat}</option>
-  
-        </Form.Select>
-        <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
-      </FloatingLabel>
-      )
-    }
-
-
+        <Form.Group className={styles.formGroup}>
+          <div className={styles.floatingLabel}>
+            <Form.Select
+              id="event_catagory"
+              aria-label="Select Category"
+              onChange={handleEventCatChange}
+              required
+              disabled={!isInputEnabled || event_cat.length === 0}
+              className={`${styles.formSelect} ${styles.floatingSelect}`}
+              value={values.event_catagory || ''}
+            >
+              <option value="">Select Event Category</option>
+              {event_cat.map((cat, index) => (
+                <option key={index} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </Form.Select>
+            <Form.Label>Select Event Category</Form.Label>
+            <Form.Control.Feedback type='invalid'>{errors.event_catagory}</Form.Control.Feedback>
+          </div>
+        </Form.Group>
+      )}
       
-      {event_cat && !selectedEventCat &&   (
-      <FloatingLabel label="Select Event Catagory"  className="mb-3" >
-        <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleEventCatChange} required disabled={!isInputEnabled || event_cat.length==0 }
-          as='select' 
-          className="custom-input"
-          isInvalid={ !!errors.event_catagory}
-        >
-           <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
-        <option></option>
-        {event_cat && 
-          event_cat.map(d => (<option value={d.event_catagory}>{d.event_catagory}</option>))} 
-  
-        </Form.Select>
-        <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
-      </FloatingLabel>
-      )} 
+      {event_cat && !selectedEventCat && (
+        <Form.Group className={styles.formGroup}>
+          <FloatingLabel label="Select Event Catagory"  className={styles.formLabel}>
+            <Form.Select id="event_catagory" aria-label="Select Catagory" onChange={handleEventCatChange} required disabled={!isInputEnabled || event_cat.length==0 }
+              as='select' 
+              className={styles.customInput}
+              isInvalid={ !!errors.event_catagory}
+            >
+              <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
+              <option></option>
+              {event_cat && 
+                event_cat.map(d => (<option value={d.event_catagory}>{d.event_catagory}</option>))}  
+            </Form.Select>
+            <Form.Control.Feedback type='invalid'>{ errors.event_catagory}</Form.Control.Feedback>
+          </FloatingLabel>
+        </Form.Group>
+      )}
       
-  {groups &&   (
-      <FloatingLabel label="Select your Fitness Group" className="mb-3" >
-        <Form.Select id="group_name" aria-label="Select Group Name" onChange={  handleGroupChange} 
-          as='select' 
-          className="custom-input"
-        >
+      {groups &&   (
+        <Form.Group className={styles.formGroup}>
+          <FloatingLabel label="Select your Fitness Group" className={styles.formLabel}>
+            <Form.Select id="group_name" aria-label="Select Group Name" onChange={  handleGroupChange} 
+              as='select' 
+              className={styles.customInput}
+            >
   
-        <option></option>
-        {groups && 
-          groups.data.map(d => (<option value={d.attributes.group_name}>{d.attributes.group_name}</option>))} 
-  
-        </Form.Select>
-       
-      </FloatingLabel>
+              <option></option>
+              {groups && 
+                groups.data.map(d => (<option value={d.attributes.group_name}>{d.attributes.group_name}</option>))} 
+                </Form.Select>
+           
+          </FloatingLabel>
+        </Form.Group>
       )} 
 
 
       <FloatingLabel
           label="Emergency Contact Name"
-           className="mb-3"
+           className={styles.formLabel}
         >
           <Form.Control type="input" id="emergency_name" placeholder="enter emergency contact name" required disabled={!isInputEnabled} 
                onChange={ e => setField('emergency_name', e.target.value) }
                isInvalid={ !!errors.emergency_name }
-               className="custom-input"
+               className={styles.customInput}
           />
           <Form.Control.Feedback type='invalid'>{ errors.emergency_name}</Form.Control.Feedback>
         </FloatingLabel>
 
         <FloatingLabel
           label="Emergency Contact Number"
-           className="mb-3"
+           className={styles.formLabel}
         >
           <Form.Control type="number" id="emergency_contact" placeholder="enter your emergency contact number" required disabled={!isInputEnabled} 
                onChange={ e => setField('emergency_contact', e.target.value) }
-               className="custom-input"
+               className={styles.customInput}
                isInvalid={ !!errors.emergency_contact }
           />
           <Form.Control.Feedback type='invalid'>{ errors.emergency_contact}</Form.Control.Feedback>
         </FloatingLabel>
 
-        {tshirt_flag &&   (
-      <FloatingLabel label="Select Tshirt Size"  className="mb-3">
-        <Form.Select id="tshirt_size" aria-label="Select Size" onChange={  handleTshirtSizeChange} required disabled={!isInputEnabled}
-          as='select' 
-          className="custom-input"
-          isInvalid={ !!errors.tshirt_size}
-        >
-           <Form.Control.Feedback type='invalid'>{ errors.tshisrt_size}</Form.Control.Feedback>
-        <option></option>
+        {tshirt_flag && (
+          <Form.Group className={styles.formGroup}>
+            <div className={styles.floatingLabel}>
+              <Form.Select
+                id="tshirt_size"
+                aria-label="Select T-shirt Size"
+                onChange={handleTshirtSizeChange}
+                required
+                disabled={!isInputEnabled}
+                className={`${styles.formSelect} ${styles.floatingSelect}`}
+                value={values.tshirt_size || ''}
+              >
+                <option value="">Select T-shirt Size</option>
+                {tshirt_sizes_arr && tshirt_sizes_arr.map((size, index) => (
+                  <option key={index} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Label>Select T-shirt Size</Form.Label>
+              <Form.Control.Feedback type='invalid'>{errors.tshirt_size}</Form.Control.Feedback>
+            </div>
+          </Form.Group>
+        )}
 
-        {tshirt_sizes_arr && 
-          tshirt_sizes_arr.map(d => (<option value={d}>{d}</option>))} 
-  
-        </Form.Select>
-        <Form.Control.Feedback type='invalid'>{ errors.tshirt_size}</Form.Control.Feedback>
-      </FloatingLabel>
-      )} 
-
-{accomodation_flag &&   (
-      <FloatingLabel label="Select Room Type"  className="mb-3">
-        <Form.Select id="accomodation_option" aria-label="Select Room" onChange={  handleAccomodationChange} required disabled={!isInputEnabled}
-          as='select' 
-          className="custom-input"
-          isInvalid={ !!errors.accomodation_option}
-        >
-           <Form.Control.Feedback type='invalid'>{ errors.accomodation_option}</Form.Control.Feedback>
-        <option></option>
-
-        {accomodation_options_arr && 
-          accomodation_options_arr.map(d => (<option value={d}>{d}</option>))} 
-  
-        </Form.Select>
-        <Form.Control.Feedback type='invalid'>{ errors.accomodation_option}</Form.Control.Feedback>
-      </FloatingLabel>
-      )} 
+{accomodation_flag && (
+  <Form.Group className={styles.formGroup}>
+    <div className={styles.floatingLabel}>
+      <Form.Select
+        id="accomodation_option"
+        aria-label="Select Accommodation"
+        onChange={handleAccomodationChange}
+        required
+        disabled={!isInputEnabled}
+        className={`${styles.formSelect} ${styles.floatingSelect}`}
+        value={values.accomodation_option || ''}
+      >
+        <option value="">Select Room Type</option>
+        {accomodation_options_arr && accomodation_options_arr.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </Form.Select>
+      <Form.Label>Select Room Type</Form.Label>
+      <Form.Control.Feedback type='invalid'>{errors.accomodation_option}</Form.Control.Feedback>
+    </div>
+  </Form.Group>
+)}
 
         { profession_flag && 
-        <FloatingLabel label="Profession"  className="mb-3">
+        <FloatingLabel label="Profession"  className={styles.formLabel}>
           
           <Form.Control type="input" id="profession" placeholder="Enter your profession"  
-          className="custom-input"
+          className={styles.customInput}
            disabled={!isInputEnabled}
           onChange={ e => setField('profession', e.target.value) }
         /> 
@@ -946,7 +991,7 @@ onSubmit={handleSubmit}
 
 {/* File Upload Field */}
 {   document_flag && 
-<Form.Group controlId="fileUpload" className="mb-3">
+<Form.Group controlId="fileUpload" className={styles.formGroup}>
 
   
           <Form.Label>Upload File for ID proof (Image or PDF)</Form.Label>
@@ -954,7 +999,7 @@ onSubmit={handleSubmit}
             type="file"
             accept=".jpg,.jpeg,.png,.pdf"
             onChange={handleFileChange}
-            className="custom-input"
+            className={styles.customInput}
             isInvalid={ !!errors.fileUpload }
             required disabled={!isInputEnabled}/>
             <Form.Control.Feedback type='invalid'>{ errors.fileUpload }</Form.Control.Feedback>
@@ -963,27 +1008,26 @@ onSubmit={handleSubmit}
   }
       
 
-      <Form.Group>  
+      <Form.Group className={styles.formGroup}>  
                       <FloatingLabel
                         label="Enrollment Id"
-                        className="mb-3"
+                        className={styles.formLabel}
                       >
                       <Form.Control type="input" id="enrollmentId" 
-                      className="custom-input"
+                      className={styles.customInput}
                       value={enrollmentId} disabled/>
                       </FloatingLabel>
                       
                       </Form.Group>
 
                       {   platform_fees_flag && 
-                      <Form.Group>  
+                      <Form.Group className={styles.formGroup}>  
         <FloatingLabel
           label="Base Price"
-          className="mb-3"
+          className={styles.formLabel}
         >
-          
         <Form.Control type="input" id="basePrice" 
-        className="custom-input"
+        className={styles.customInput}
         value={basePrice} disabled/>
         </FloatingLabel>
         
@@ -991,13 +1035,13 @@ onSubmit={handleSubmit}
   }
                       {   GST_flag && 
         
-        <Form.Group>  
+        <Form.Group className={styles.formGroup}>  
         <FloatingLabel
           label="GST"
-          className="mb-3"
+          className={styles.formLabel}
         >
         <Form.Control type="input" id="gst" 
-        className="custom-input"
+        className={styles.customInput}
         value={GST_charges} disabled/>
         </FloatingLabel>
         
@@ -1007,13 +1051,13 @@ onSubmit={handleSubmit}
 
 {   platform_fees_flag && 
         
-        <Form.Group>  
+        <Form.Group className={styles.formGroup}>  
         <FloatingLabel
           label="Platform Fees"
-          className="mb-3"
+          className={styles.formLabel}
         >
         <Form.Control type="input" id="platform_fees" 
-        className="custom-input"
+        className={styles.customInput}
         value={platform_fees} disabled/>
         </FloatingLabel>
         
@@ -1021,31 +1065,24 @@ onSubmit={handleSubmit}
 
                       }
 
-      <Form.Group>  
+      <Form.Group className={styles.formGroup}>  
       
 
 
                       <FloatingLabel
                         label="Event Price"
-                        className="mb-3"
+                        className={styles.formLabel}
                       >
                       <Form.Control type="input" id="price"
-                      className="custom-input"
+                      className={styles.customInput}
                        value={totalPrice} disabled/>
                       </FloatingLabel>
                       
                       </Form.Group>
 
-
-      
-      
-  
-   
-  
-
    {terms_flag &&    
          
-      <Form.Group> 
+      <Form.Group className={styles.formGroup}> 
      
       <Form.Check
             inline

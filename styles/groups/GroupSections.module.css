@@ -1,0 +1,346 @@
+.section {
+  padding: 4rem 0;
+}
+
+.sectionTitle {
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Contact Section */
+.contactInfo {
+  margin-bottom: 2rem;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.contactItem svg {
+  margin-right: 1rem;
+  color: #007bff;
+}
+
+.socialLinks {
+  margin-top: 2rem;
+}
+
+.socialLinks h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.socialIcons a {
+  font-size: 1.5rem;
+  color: #007bff;
+  transition: color 0.3s;
+}
+
+.socialIcons a:hover {
+  color: #0056b3;
+}
+
+/* Contact Form */
+.contactForm {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contactForm h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+}
+
+/* Action Buttons */
+.actionButtons {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.actionButtons h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.actionButton {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.actionButton:last-child {
+  margin-bottom: 0;
+}
+
+.actionButton svg {
+  font-size: 1.3rem;
+}
+
+/* Approach Section */
+.approachRow {
+  margin-bottom: 2rem;
+}
+
+.approachCard {
+  text-align: center;
+  padding: 2rem;
+  height: 100%;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+
+.approachCard:hover {
+  transform: translateY(-5px);
+}
+
+.approachIcon {
+  font-size: 2.5rem;
+  color: #007bff;
+  margin-bottom: 1rem;
+}
+
+/* Services Section */
+.serviceCard {
+  height: 100%;
+  transition: transform 0.3s;
+}
+
+.serviceCard:hover {
+  transform: translateY(-5px);
+}
+
+.servicePrice {
+  font-weight: bold;
+  color: #28a745;
+  margin-top: 1rem;
+}
+
+/* Achievements Section */
+.achievementCard {
+  margin-bottom: 2rem;
+  height: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.achievementImage {
+  position: relative;
+  width: 100%;
+  height: 200px;
+}
+
+.achievementImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.achievementContent {
+  padding: 1.5rem;
+}
+
+.achievementDate {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Events Section */
+.eventCard {
+  height: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.eventCard img {
+  width: 100%;
+  height: 200px !important; /* Force the height */
+  object-fit: cover !important; /* Force cover */
+  object-position: center;
+}
+
+.eventMeta {
+  margin: 1rem 0;
+  color: #666;
+}
+
+.eventMeta > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.eventMeta svg {
+  margin-right: 0.5rem;
+}
+
+/* Gallery Section */
+.gallery {
+  margin: -0.5rem;
+}
+
+.galleryItem {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.galleryItem img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.galleryItem:hover img {
+  transform: scale(1.05);
+}
+
+.galleryCaption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.modalImage {
+  width: 100%;
+  height: auto;
+}
+
+/* Team Section */
+.teamMember {
+  text-align: center;
+}
+
+.memberImage {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.memberImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.memberRole {
+  color: #007bff;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.memberBio {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.memberSocial {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.memberSocial a {
+  color: #007bff;
+  font-size: 1.2rem;
+  transition: color 0.3s;
+}
+
+.memberSocial a:hover {
+  color: #0056b3;
+}
+
+/* Products & Resources Section */
+.resourceCard {
+  height: 100%;
+  text-align: center;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.resourceCard:hover {
+  transform: translateY(-5px);
+}
+
+.resourceIconWrapper {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 50%;
+}
+
+.resourceIcon {
+  font-size: 1.8rem;
+  color: #007bff;
+}
+
+.resourceCard h3 {
+  margin: 1rem 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.resourceLink {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.resourceLink:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}

@@ -309,7 +309,7 @@ const EditEvent = () => {
 
   return (
     <div>
-      <EventHeader userInfo={userInfo} userRole={userRole} />
+      <EventHeader />
       <Container>
         <div className="px-4">
           <Form onSubmit={handleSubmit}>
@@ -762,28 +762,5 @@ const EditEvent = () => {
     </div>
   );
 };
-
-EditEvent.getLayout = (page) => <>{page}</>;
-
-export async function getServerSideProps(context) {
-  const userRole = context.req.cookies.userRole || null;
-  const userInfo = context.req.cookies.userInfo ? JSON.parse(context.req.cookies.userInfo) : null;
-
-  if (!userRole || !userInfo) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      userRole,
-      userInfo
-    },
-  };
-}
 
 export default EditEvent;

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Alert, Container } from 'react-bootstrap';
 import { API_URL } from '../../../config';
 import { useRouter } from 'next/router';
+import Layout from '@/components/global/layout';
+import ManageNav from '@/components/manage/ManageNav';
 import EventHeader from '../../../components/manage/EventHeader';
 
 const ManageEvents = () => {
@@ -29,74 +31,72 @@ const ManageEvents = () => {
         url += `&filters[event_organiser]=${encodeURIComponent(userEmail)}`;
       }
 
-      const response = await fetch(url, {
+      const res = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (!response.ok) {
+      if (!res.ok) {
         throw new Error('Failed to fetch events');
       }
 
-      const data = await response.json();
-      setEvents(data.data || []);
+      const data = await res.json();
+      setEvents(data.data);
     } catch (err) {
-      console.error('Error fetching events:', err);
-      setError('Failed to load events. Please try again.');
+      setError('Error fetching events');
+      console.error(err);
     }
   };
 
   return (
-    <div>
-      <EventHeader />
-      <Container className="px-4">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>Events Management</h2>
-          <Button 
-            variant="primary" 
-            onClick={() => router.push('/manage/events/add')}
-          >
-            Add Event
-          </Button>
-        </div>
-
+    <Layout title="Manage Events">
+      <Container>
+        <ManageNav />
+        <EventHeader />
         {error && <Alert variant="danger">{error}</Alert>}
-        
-        <Table striped bordered hover responsive>
-          <thead>
-            <tr>
-              <th>Event Name</th>
-              <th>Date</th>
-              <th>Location</th>
-              <th>Sport Type</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.map((event) => (
-              <tr key={event.id}>
-                <td>{event.attributes.name}</td>
-                <td>{new Date(event.attributes.date).toLocaleDateString()}</td>
-                <td>{event.attributes.location}</td>
-                <td>{event.attributes.sportType}</td>
-                <td>{event.attributes.status}</td>
-                <td>
-                  <Button 
-                    variant="warning" 
-                    size="sm"
-                    onClick={() => router.push(`/manage/events/${event.id}/edit`)}
-                  >
-                    Change
-                  </Button>
-                </td>
+        <div className="table-responsive">
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {events.map((event) => (
+                <tr key={event.id}>
+                  <td>{event.attributes.name}</td>
+                  <td>{new Date(event.attributes.date).toLocaleDateString()}</td>
+                  <td>{event.attributes.location}</td>
+                  <td>{event.attributes.status}</td>
+                  <td>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => router.push(`/manage/events/${event.id}`)}
+                    >
+                      View
+                    </Button>
+                    <Button
+                      variant="warning"
+                      size="sm"
+                      onClick={() => router.push(`/manage/events/${event.id}/edit`)}
+                    >
+                      Edit
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
       </Container>
-    </div>
+    </Layout>
   );
 };
 

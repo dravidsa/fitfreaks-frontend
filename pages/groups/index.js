@@ -1,242 +1,93 @@
 import React, { useState } from "react";
-import { Tab, Tabs } from "react-bootstrap";
+import { Tab, Tabs, Card, Button } from "react-bootstrap";
 import Layout from "../../components/global/layout";
-import {
-  ImPriceTags,
-  ImLocation2,
-  ImTicket,
-  ImCalendar,
-  ImClock,
-} from "react-icons/im";
-import SectionTitle from "../../components/global/section-title";
 import Link from "next/link";
-import { API_URL } from "../../config";
-import Pagination from "../../components/pagination";
 import InnerPageLayout from "../../components/inner-page-layout";
+import { groupsData } from "../../data/groups";
 
-const GroupsPage = ({groups}) => {
+const GroupsPage = () => {
   const [key, setKey] = useState("AllGroups");
-  const { data } = groups;
-  const strengthTrainingGroups = data?.filter(grp => grp.attributes.sport ==="Strength Training")
-  const cyclingGroups = data?.filter(grp => grp.attributes.sport ==="Cycling")
-  const yogaGroups = data?.filter(grp => grp.attributes.sport ==="Yoga")
-  const trekkingGroups = data?.filter(grp => grp.attributes.sport ==="Trekking")
-  const swimmingGroups = data?.filter(grp => grp.attributes.sport ==="Swimming")
-  //const gymGroups = data?.filter(grp => grp.attributes.category ==="concert")
   
-  //pagination
+  // Filter groups by sport
+  const allGroups = groupsData;
+  const runningGroups = groupsData.filter(grp => grp.attributes.name.toLowerCase().includes('running'));
+  const cyclingGroups = groupsData.filter(grp => grp.attributes.name.toLowerCase().includes('cycling'));
+  
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(6);
-
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const groupData = data?.slice(indexOfFirstPost, indexOfLastPost);
+  const currentGroups = allGroups.slice(indexOfFirstPost, indexOfLastPost);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const renderGroupCard = (group) => {
+    const { attributes } = group;
+    return (
+      <div key={group.id} className="col-md-6 col-lg-4 mb-4">
+        <Card>
+          <Card.Img 
+            variant="top" 
+            src={attributes.hero_image.data.attributes.url} 
+            style={{ height: '200px', objectFit: 'cover' }}
+          />
+          <Card.Body>
+            <Card.Title>{attributes.name}</Card.Title>
+            <Card.Text>{attributes.tagline}</Card.Text>
+            <Card.Text className="text-muted">
+              {attributes.contact.address}
+            </Card.Text>
+            <Link href={`/groups/${attributes.slug}`} passHref>
+              <Button variant="primary">View Details</Button>
+            </Link>
+          </Card.Body>
+        </Card>
+      </div>
+    );
+  };
+
   return (
     <Layout title="Groups Page">
-       <InnerPageLayout title="All Groups" />
-      <div className="upcoming-events section-padding">
+      <InnerPageLayout title="All Groups" />
+      <div className="section-padding">
         <div className="container">
           <Tabs
-          id="controlled-tab-example"
-          activeKey={key}
-          onSelect={(k) => setKey(k)}
-        >
-          <Tab eventKey="AllGroups" title="All Groups">
-            <div className="row">
-            {groupData?.map((grp) => (
-            <div key={grp.id} className="col-md-6 col-lg-4 mb-4">
-              <div className="upcoming-events__item">
-                <div className="image">
-                  <img
-                    className="img-fluid"
-                    src={`${API_URL}${grp.attributes?.image?.data?.attributes.url}`}
-                    alt={grp?.attributes?.image?.data?.attributes?.name}
-                  />
-                  {grp?.attributes?.sport !== "none" ? (
-                        <div className="popular">
-                          {grp?.attributes?.sport}
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                </div>
-                <div className="upcoming-events__item__info">
-                  <div className="title">
-                    <h3>
-                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
-                    </h3>
-                  </div>
-                  
-                  <div className="d-flex align-items-center gap-2 mb-2">
-                    <ImLocation2 /> <span>{grp.attributes.location}</span>
-                  </div>
-            
-                </div>
+            id="controlled-tab-example"
+            activeKey={key}
+            onSelect={(k) => setKey(k)}
+          >
+            <Tab eventKey="AllGroups" title="All Groups">
+              <div className="row mt-4">
+                {currentGroups.map(renderGroupCard)}
               </div>
-            </div>
-          ))}
-            </div>
-            {data.length > 6 ? (
-            <Pagination
-              postsPerPage={postsPerPage}
-              totalPosts={data?.length}
-              paginate={paginate}
-            />
-          ) : (
-            ""
-          )}
-          </Tab>
-          <Tab eventKey="ST" title="Strength Training">
-            <div className="row">
-            {strengthTrainingGroups?.slice(0, 6).map((grp) => (
-            <div key={grp.id} className="col-md-6 col-lg-4 mb-4">
-              <div className="upcoming-events__item">
-                <div className="image">
-                  <img
-                    className="img-fluid"
-                    src={`${API_URL}${grp.attributes?.image?.data?.attributes.url}`}
-                    alt={grp.attributes.image.data.attributes.name}
-                  />
-                 {grp?.attributes?.sport !== "none" ? (
-                        <div className="popular">
-                          {grp?.attributes?.sport}
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                </div>
-                <div className="upcoming-events__item__info">
-                  <div className="title">
-                    <h3>
-                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
-                    </h3>
-                  </div>
-                  <div className="d-flex align-items-center justify-content-between mb-2">
-                 
-            
-                  </div>
-                  <div className="d-flex align-items-center gap-2 mb-2">
-                    <ImLocation2 /> <span>{grp.attributes.location}</span>
-                  </div>
-              
-                </div>
+            </Tab>
+            <Tab eventKey="Running" title="Running">
+              <div className="row mt-4">
+                {runningGroups.map(renderGroupCard)}
               </div>
-            </div>
-          ))}
-            </div>
-          </Tab>
-          <Tab groupsKey="cycling" title="Cycling">
-            <div className="row">
-            {cyclingGroups?.slice(0, 6).map((grp) => (
-            <div key={grp.id} className="col-md-6 col-lg-4 mb-4">
-              <div className="upcoming-events__item">
-                <div className="image">
-                  <img
-                    className="img-fluid"
-                    src={`${API_URL}${grp.attributes?.image?.data?.attributes.url}`}
-                    alt={grp.attributes.image.data.attributes.name}
-                  />
-                  {grp?.attributes?.sport !== "none" ? (
-                        <div className="popular">
-                          {grp?.attributes?.sport}
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                </div>
-                <div className="upcoming-events__item__info">
-                  <div className="title">
-                    <h3>
-                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
-                    </h3>
-                  </div>
-              
-                  <div className="d-flex align-items-center gap-2 mb-2">
-                    <ImLocation2 /> <span>{grp.attributes.location}</span>
-                  </div>
-                
-                </div>
+            </Tab>
+            <Tab eventKey="Cycling" title="Cycling">
+              <div className="row mt-4">
+                {cyclingGroups.map(renderGroupCard)}
               </div>
-            </div>
-          ))}
-            </div>
-          </Tab>
-          <Tab eventKey="yoga" title="Yoga">
-            <div className="row">
-            {yogaGroups?.slice(0, 6).map((grp) => (
-            <div key={grp.id} className="col-md-6 col-lg-4 mb-4">
-              <div className="upcoming-events__item">
-                <div className="image">
-                  <img
-                    className="img-fluid"
-                    src={`${API_URL}${grp.attributes?.image?.data?.attributes.url}`}
-                    alt={grp.attributes.image.data.attributes.name}
-                  />
-                 {grp?.attributes?.sport !== "none" ? (
-                        <div className="popular">
-                          {grp?.attributes?.sport}
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                </div>
-                <div className="upcoming-events__item__info">
-                  <div className="title">
-                    <h3>
-                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
-                    </h3>
-                  </div>
-                
-                  <div className="d-flex align-items-center gap-2 mb-2">
-                    <ImLocation2 /> <span>{grp.attributes.location}</span>
-                  </div>
-  
-                </div>
-              </div>
-            </div>
-          ))}
-            </div>
-          </Tab>
-          <Tab eventKey="swimming" title="Swimming">
-            <div className="row">
-            {swimmingGroups?.slice(0, 6).map((grp) => (
-            <div key={grp.id} className="col-md-6 col-lg-4 mb-4">
-              <div className="upcoming-events__item">
-                <div className="image">
-                  <img
-                    className="img-fluid"
-                    src={`${API_URL}${grp.attributes?.image?.data?.attributes.url}`}
-                    alt={grp.attributes.image.data.attributes.name}
-                  />
-                  {grp?.attributes?.sport !== "none" ? (
-                        <div className="popular">
-                          {grp?.attributes?.sport}
-                        </div>
-                      ) : (
-                        ""
-                      )}
-                </div>
-                <div className="upcoming-events__item__info">
-                  <div className="title">
-                    <h3>
-                      <Link href={`/groups/${grp?.attributes?.slug}`} legacyBehavior>{grp?.attributes?.name}</Link>
-                    </h3>
-                  </div>
+            </Tab>
+          </Tabs>
           
-                  <div className="d-flex align-items-center gap-2 mb-2">
-                    <ImLocation2 /> <span>{grp.attributes.location}</span>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-          ))}
-            </div>
-          </Tab>
-
-        </Tabs>
+          {/* Pagination */}
+          <div className="d-flex justify-content-center mt-4">
+            <nav>
+              <ul className="pagination">
+                {[...Array(Math.ceil(allGroups.length / postsPerPage))].map((_, i) => (
+                  <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                    <button className="page-link" onClick={() => paginate(i + 1)}>
+                      {i + 1}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
     </Layout>
@@ -244,14 +95,3 @@ const GroupsPage = ({groups}) => {
 };
 
 export default GroupsPage;
-
-export async function getStaticProps() {
-  const res = await fetch(`${API_URL}/api/groups?populate=*`);
-  const groups = await res.json();
-
-  return {
-    props: { groups },
-    revalidate: 1,
-  };
-}
-
