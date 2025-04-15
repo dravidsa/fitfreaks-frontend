@@ -11,7 +11,7 @@ import {
 import SectionTitle from "../../components/global/section-title";
 import Link from "next/link";
 import { API_URL } from "../../config";
-import Pagination from "../../components/pagination";
+import Pagination from "../../components/Pagination";
 import InnerPageLayout from "../../components/inner-page-layout";
 import JoinUs from "../../components/join-us";
 
@@ -94,7 +94,7 @@ const EventPage = ({events}) => {
                             <img
                               className="img-fluid"
                               src={`${API_URL}${evt.attributes?.image?.data?.attributes.url}`}
-                              alt={evt.attributes.image.data.attributes.name}
+                              alt={evt.attributes?.image?.data?.attributes?.name}
                             />
                           </a>
 
@@ -132,6 +132,7 @@ const EventPage = ({events}) => {
                             </div>
                             <div className="d-flex align-items-center gap-2">
                               <ImClock />
+                              
                               <span>{evt.attributes.time.slice(0, 5)}</span>
                             </div>
                             

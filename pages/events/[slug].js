@@ -45,12 +45,7 @@ const EventSinglePage = ({events, slug}) => {
               />
               <h2 className="pt-3 mb-3">About {name}</h2>
               <div className="singlePage__event-description" dangerouslySetInnerHTML={{ __html: md().render(description) }} />
-             { gpsMap && (
-              <React.StrictMode>
-                <GPXMap gpxData={gpsMap} />
-              </React.StrictMode>
-             )
-}
+            
             </div>
             <div className="col-lg-4">
              <div className="singlePage__sidebar">
@@ -121,7 +116,7 @@ const EventSinglePage = ({events, slug}) => {
                   <img
                     className="img-fluid"
                     src={`${API_URL}${evt.attributes?.image?.data?.attributes.url}`}
-                    alt={evt.attributes.image.data.attributes.name}
+                    alt={evt.attributes?.image?.data?.attributes.name}
                   />
                   <div className="popular">{evt?.attributes?.eventType}</div>
                 </div>

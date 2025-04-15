@@ -4,7 +4,7 @@ import { HiShare } from "react-icons/hi";
 import { RiTimeFill } from "react-icons/ri";
 import Layout from "../../components/global/layout";
 import InnerPageLayout from "../../components/inner-page-layout";
-import Pagination from "../../components/pagination";
+import Pagination from "../../components/Pagination";
 import { API_URL } from "../../config";
 
 const Blogs = ({ blogs }) => {
