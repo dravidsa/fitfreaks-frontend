@@ -132,6 +132,7 @@ const data = await fetch("/api/sendMail", { method: "POST"  ,
 
 } 
 
+
  async function getEvent(event_id) { 
     console.log( "calling get event for event_id " + event_id  ); 
     const EVENT_URL = API_URL+"/api/events/"+event_id+"?populate=*";
