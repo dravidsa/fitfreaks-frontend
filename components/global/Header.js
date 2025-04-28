@@ -70,7 +70,7 @@ const Header = ({username}) => {
         <Navbar className="p-0" bg="none" expand="lg">
         
           <a>
-              <Image src="/fitfreaks_logo.jpg" alt="FitFreaks Logo" width={150} height={50} />
+              <Image src="/fitfreaks_logo_new.jpg" alt="FitFreaks Logo" width={150} height={50} />
             </a>
 
       
@@ -100,6 +100,11 @@ const Header = ({username}) => {
                 </Link>
               </li>
               <li className="nav-item">
+                <Link className="nav-link" href="/about">
+                  About
+                </Link>
+              </li>
+              <li className="nav-item">
                 <Link className="nav-link" href="/events">
                   Events
                 </Link>
@@ -111,7 +116,7 @@ const Header = ({username}) => {
               </li>
              
               <li className="nav-item">
-                <Link className="nav-link" href="/groups">
+                <Link className="nav-link" href="/groups2">
                   Groups
                 </Link>
               </li>
@@ -125,11 +130,11 @@ const Header = ({username}) => {
                   Contact
                 </Link>
               </li>
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link className="nav-link" href="/auth/garminConnect">
                   Garmin
                 </Link>
-              </li>
+              </li> */}
               <li className="nav-item">
                 <Link className="nav-link" href="/ecommerce">
                   Store

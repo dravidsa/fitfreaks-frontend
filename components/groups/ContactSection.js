@@ -4,14 +4,35 @@ import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaFacebook, FaInstagram, FaTwitter
 import styles from '@/styles/groups/GroupSections.module.css';
 import { useRouter } from 'next/router';
 
-const ContactSection = ({ contact }) => {
+const ContactSection = ({ contact, to_email = 'support@fitfreaks.in' }) => {
   const { address, phone, email, facebook, instagram, twitter } = contact;
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    subject: '',
     message: ''
   });
+
+  async function sendMail(to_email,name, customer_email, message, subject, template) {
+    const mailData = {
+      name: name,
+      customer_email: customer_email,
+      subject: subject,
+      template: template,
+      query: message,
+      to_email: to_email
+    };
+    console.log("Mail data = ", JSON.stringify(mailData));
+
+    const data = await fetch("/api/sendMail", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mailData),
+    }).then((t) => t.json());
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,9 +45,12 @@ const ContactSection = ({ contact }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: Implement form submission logic
+
+    sendMail(to_email,formData.name, formData.email, formData.message, formData.subject, "query");
+
     console.log('Form submitted:', formData);
     alert('Thank you for your message! We will get back to you soon.');
-    setFormData({ name: '', email: '', message: '' });
+    setFormData({ name: '', email: '', subject: '', message: '' });
   };
 
   const handleChat = () => {
@@ -102,6 +126,16 @@ const ContactSection = ({ contact }) => {
                     placeholder="Your Email"
                     name="email"
                     value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="Subject"
+                    name="subject"
+                    value={formData.subject}
                     onChange={handleInputChange}
                     required
                   />

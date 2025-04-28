@@ -3,15 +3,17 @@ import { Tab, Tabs, Card, Button } from "react-bootstrap";
 import Layout from "../../components/global/layout";
 import Link from "next/link";
 import InnerPageLayout from "../../components/inner-page-layout";
-import { groupsData } from "../../data/groups";
+//import { groupsData } from "../../data/groups";
+import { API_URL } from "../../config";
 
-const GroupsPage = () => {
+const GroupsPage2 = ({groups}) => {
   const [key, setKey] = useState("AllGroups");
   
+  console.log("Got these groups", JSON.stringify(groups));
   // Filter groups by sport
-  const allGroups = groupsData;
-  const runningGroups = groupsData.filter(grp => grp.attributes.name.toLowerCase().includes('running'));
-  const cyclingGroups = groupsData.filter(grp => grp.attributes.name.toLowerCase().includes('cycling'));
+  const allGroups = groups.data;
+  const runningGroups = allGroups.filter(grp => grp.attributes.sport.toLowerCase().includes('running'));
+  const cyclingGroups = allGroups.filter(grp => grp.attributes.sport.toLowerCase().includes('cycling'));
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,21 +26,23 @@ const GroupsPage = () => {
 
   const renderGroupCard = (group) => {
     const { attributes } = group;
+    console.log("ind group is ", JSON.stringify(attributes)) ; 
+    console.log("ind group image is ", JSON.stringify(attributes.image.data.attributes.url)) ; 
     return (
       <div key={group.id} className="col-md-6 col-lg-4 mb-4">
         <Card>
           <Card.Img 
             variant="top" 
-            src={attributes.hero_image.data.attributes.url} 
+            src={`${API_URL}${attributes.image?.data?.attributes?.url}`} 
             style={{ height: '200px', objectFit: 'cover' }}
           />
           <Card.Body>
             <Card.Title>{attributes.name}</Card.Title>
             <Card.Text>{attributes.tagline}</Card.Text>
             <Card.Text className="text-muted">
-              {attributes.contact.address}
+              {attributes.address}
             </Card.Text>
-            <Link href={`/groups/${attributes.slug}`} passHref>
+            <Link href={`/groups2/${attributes.slug}`} passHref>
               <Button variant="primary">View Details</Button>
             </Link>
           </Card.Body>
@@ -94,10 +98,11 @@ const GroupsPage = () => {
   );
 };
 
-export default GroupsPage;
-/*
+export default GroupsPage2;
+
 export async function getStaticProps() {
   const res = await fetch(`${API_URL}/api/groups?populate=*`);
+  //const res = await fetch(`${API_URL}/api/groups?populate[approach][populate][image]=*&populate[services][populate][image]=*&populate[gallery][populate][images]=*&populate[achievements][populate][image]=*`);
   const groups = await res.json();
 
   return {
@@ -105,5 +110,3 @@ export async function getStaticProps() {
     revalidate: 1,
   };
 }
-
-*/

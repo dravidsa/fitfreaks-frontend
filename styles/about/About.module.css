@@ -1,0 +1,82 @@
+.aboutContainer {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 4rem;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.sectionContent {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  margin: 2rem 0;
+}
+
+.textContent {
+  flex: 1;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #666;
+}
+
+.imageContent {
+  flex: 1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.sectionImage {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.sectionImage:hover {
+  transform: scale(1.02);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .aboutContainer {
+    padding: 1rem;
+  }
+
+  .section {
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .sectionContent {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .section:nth-child(even) .sectionContent {
+    flex-direction: column;
+  }
+
+  .textContent, .imageContent {
+    width: 100%;
+  }
+
+  .section h2 {
+    font-size: 1.5rem;
+  }
+}

@@ -9,7 +9,9 @@ import UpcomingEventsSection from '@/components/groups/UpcomingEventsSection';
 import MediaGallerySection from '@/components/groups/MediaGallerySection';
 import TeamSection from '@/components/groups/TeamSection';
 import ProductsResourcesSection from '@/components/groups/ProductsResourcesSection';
+import TestimonialsSection from '@/components/groups/TestimonialsSection';
 import { groupsData } from '../../data/groups';
+import styles from '../../styles/groups/GroupHeader.module.css';
 
 export default function GroupSinglePage() {
   const router = useRouter();
@@ -33,16 +35,23 @@ export default function GroupSinglePage() {
     events,
     gallery,
     team,
-    resources
+    resources,
+    testimonials
   } = attributes;
 
   return (
     <Layout title={name}>
       <div>
+        <div className={styles.header}>
+          <div className={styles.logoPlaceholder}>
+            <div className={styles.circle}></div>
+          </div>
+          <h1 className={styles.groupName}>{name}</h1>
+        </div>
         <GroupHero
           tagline={tagline}
           description={description}
-          hero_image={hero_image?.data?.attributes?.url}
+          hero_image={hero_image}
         />
         <ApproachSection approach={approach} />
         <ServicesSection services={services} />
@@ -50,8 +59,12 @@ export default function GroupSinglePage() {
         <UpcomingEventsSection events={events} />
         <MediaGallerySection gallery={gallery} />
         <ProductsResourcesSection resources={resources} />
+        <TestimonialsSection testimonials={testimonials} />
         <TeamSection team={team} />
-        <ContactSection contact={contact} />
+        <ContactSection 
+          contact={contact} 
+          to_email={contact.email} 
+        />
       </div>
     </Layout>
   );

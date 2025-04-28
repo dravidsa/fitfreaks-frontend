@@ -14,6 +14,7 @@ import Groups from "../components/groups"
 import Coaches from "../components/coaches"
 import AuthButton from "../components/global/AuthButton"
 import JoinUs from "../components/join-us"
+import ContactSection from '../components/groups/ContactSection';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,6 +42,13 @@ export default function Home({ events, blogs, groups  , coaches}) {
   }, []);
   console.log( "username in index,js " + username) ; 
  
+  const defaultContact = {
+    address: "123 Fitness Street, Mumbai 400001",
+    phone: "+91 98765 43210",
+    facebook: "https://facebook.com/fitfreaks",
+    instagram: "https://instagram.com/fitfreaks",
+    twitter: "https://twitter.com/fitfreaks"
+  };
   
   return (
     <Layout title="FitFreaks" username={username}>
@@ -51,6 +59,10 @@ export default function Home({ events, blogs, groups  , coaches}) {
 
       <HowItWorks />
       <JoinUs />
+      <ContactSection 
+        contact={defaultContact}
+        to_email="support@fitfreaks.in"
+      />
     </Layout>
   );
 }

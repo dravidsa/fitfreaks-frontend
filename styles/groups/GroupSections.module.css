@@ -344,3 +344,27 @@
   color: #0056b3;
   text-decoration: underline;
 }
+
+/* Testimonials Section */
+.testimonialAvatarWrapper {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.75rem;
+  vertical-align: middle;
+}
+
+.testimonialAvatar, .testimonialAvatarPlaceholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+  background: #fafafa;
+  margin-left: 0.5rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.testimonialAvatarPlaceholder {
+  background: #e0e0e0;
+}

@@ -16,12 +16,16 @@ export default async function handler(req, res) {
     console.log ( "JSON is " + JSON.stringify(jsonString) ); 
     const data = JSON.parse(JSON.stringify(jsonString));
     const amount = data.amount;
-    console.log( "got amount as " + amount ) ; 
+    //const order_id = data.order_id; 
+    const order_id= shortid.generate(); 
+
+    console.log( "got amount as " + amount + "order id a ",order_id   ) ; 
     const currency = "INR";
     const options = {
       amount: (amount * 100).toString(),
       currency,
-      receipt: shortid.generate(),
+      receipt: order_id,
+     // receipt: shortid.generate(),
       payment_capture,
     };
 
@@ -31,6 +35,7 @@ export default async function handler(req, res) {
         id: response.id,
         currency: response.currency,
         amount: response.amount,
+        order_id : order_id 
       });
     } catch (err) {
       console.log(err);

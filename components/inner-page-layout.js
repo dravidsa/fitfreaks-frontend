@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FaAngleRight } from "react-icons/fa";
 
-const InnerPageLayout = ({ title }) => {
+const InnerPageLayout = ({ title, children }) => {
   return (
     <section className="section-padding inner-page">
       <div className="container">
@@ -15,6 +15,7 @@ const InnerPageLayout = ({ title }) => {
             <li>{title}</li>
           </ul>
         </div>
+        {children}
       </div>
     </section>
   );

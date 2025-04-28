@@ -16,7 +16,7 @@ export const groupsData = [
       contact: {
         address: "123 Fitness Street, Andheri West, Mumbai 400053",
         phone: "+91 98765 43210",
-        email: "run@fitfreaks.in",
+        email: "dravidsa@hotmail.com",
         facebook: "https://facebook.com/fitfreaksrun",
         instagram: "https://instagram.com/fitfreaksrun",
         twitter: "https://twitter.com/fitfreaksrun"
@@ -223,7 +223,7 @@ export const groupsData = [
       contact: {
         address: "456 Sports Hub, Powai, Mumbai 400076",
         phone: "+91 98765 43211",
-        email: "cycle@fitfreaks.in",
+        email: "sandeep.dravid@gmail.com",
         facebook: "https://facebook.com/fitfreakscycle",
         instagram: "https://instagram.com/fitfreakscycle"
       },

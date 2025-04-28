@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Modal } from 'react-bootstrap';
 import styles from '@/styles/GroupSections.module.css';
+import { API_URL } from '@/config';
 
 const MediaGallerySection = ({ gallery }) => {
   const [showModal, setShowModal] = useState(false);
@@ -16,16 +17,17 @@ const MediaGallerySection = ({ gallery }) => {
       <Container>
         <h2 className={styles.sectionTitle}>Media Gallery</h2>
         <Row className={styles.gallery}>
-          {gallery.map((image, index) => (
+          {gallery.map((galleryEvent, index) => (
             <Col xs={6} md={4} lg={3} key={index} className="mb-4">
               <div 
                 className={styles.galleryItem}
-                onClick={() => handleImageClick(image)}
+                onClick={() => handleImageClick(galleryEvent)}
               >
-                <img src={image.url} alt={image.caption} />
-                {image.caption && (
+                <img src={`${API_URL}${galleryEvent.image?.data?.attributes?.url}`}  />
+                {galleryEvent.name && (
                   <div className={styles.galleryCaption}>
-                    {image.caption}
+                    {galleryEvent.name}
+                    {galleryEvent.description}
                   </div>
                 )}
               </div>
