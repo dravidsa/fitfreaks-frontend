@@ -27,22 +27,22 @@ const GroupsPage2 = ({groups}) => {
   const renderGroupCard = (group) => {
     const { attributes } = group;
     console.log("ind group is ", JSON.stringify(attributes)) ; 
-    console.log("ind group image is ", JSON.stringify(attributes.image.data.attributes.url)) ; 
+    console.log("ind group image is ", JSON.stringify(attributes?.image?.data?.attributes?.url)) ; 
     return (
       <div key={group.id} className="col-md-6 col-lg-4 mb-4">
         <Card>
           <Card.Img 
             variant="top" 
-            src={`${API_URL}${attributes.image?.data?.attributes?.url}`} 
+            src={`${API_URL}${attributes?.image?.data?.attributes?.url}`} 
             style={{ height: '200px', objectFit: 'cover' }}
           />
           <Card.Body>
-            <Card.Title>{attributes.name}</Card.Title>
-            <Card.Text>{attributes.tagline}</Card.Text>
+            <Card.Title>{attributes?.name}</Card.Title>
+            <Card.Text>{attributes?.tagline}</Card.Text>
             <Card.Text className="text-muted">
-              {attributes.address}
+              {attributes?.address}
             </Card.Text>
-            <Link href={`/groups2/${attributes.slug}`} passHref>
+            <Link href={`/groups2/${attributes?.slug}`} passHref>
               <Button variant="primary">View Details</Button>
             </Link>
           </Card.Body>
