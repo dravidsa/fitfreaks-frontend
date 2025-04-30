@@ -85,9 +85,17 @@ const ManageEvents = () => {
                     <Button
                       variant="warning"
                       size="sm"
+                      className="me-2"
                       onClick={() => router.push(`/manage/events/${event.id}/edit`)}
                     >
                       Edit
+                    </Button>
+                    <Button
+                      variant="info"
+                      size="sm"
+                      onClick={() => router.push(`/manage/events/${event.id}/enrollments`)}
+                    >
+                      Enrollments
                     </Button>
                   </td>
                 </tr>
